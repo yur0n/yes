@@ -46,9 +46,12 @@ export async function addPhone(conversation: any, ctx: any) {
 				username: ctx.from.username
 			}
 			await userModel.findOneAndUpdate({ telegram: ctx.from.id }, user, { upsert: true, new: true });
-			replyAndDel(ctx, `✅ Ваш номер телефона ${phone} сохранен, ждите уведомлений о прибытии ваших заказов!`, 10_000);
+			ctx.reply(`✅ Ваш номер телефона ${phone} сохранен, ждите уведомлений о прибытии ваших заказов!`);
 		} else {
-			replyAndDel(ctx, '❌ Вы не поделились своим номером телефона');
+			ctx.reply('❌ Вы не поделились своим номером телефона');
+		// 	replyAndDel(ctx, `✅ Ваш номер телефона ${phone} сохранен, ждите уведомлений о прибытии ваших заказов!`, 10_000);
+		// } else {
+		// 	replyAndDel(ctx, '❌ Вы не поделились своим номером телефона');
 		}
 		
 	} catch (error) {
