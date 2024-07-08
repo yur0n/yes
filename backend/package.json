@@ -22,7 +22,8 @@
     "start": "node dist/src/main.js",
     "dev": "tsx watch --env-file=.env src/main.ts",
     "seed": "tsx src/scripts/seed.js",
-    "bot": "tsx watch --env-file=../.env src/bots/amo_bot.ts"
+    "amobot": "tsx --env-file=../.env src/bots/amo_bot.ts",
+    "amotest": "node --env-file=../.env test/amo.js"
   },
   "author": "",
   "license": "ISC",
