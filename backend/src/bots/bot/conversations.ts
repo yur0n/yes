@@ -39,7 +39,8 @@ export async function addPhone(conversation: any, ctx: any) {
 		if (ctx.update.callback_query?.data) return
 		deleteMsg(ctx, ctx.from.id, ctx.message.message_id);
 		if (ctx.update.message?.contact?.phone_number) {
-			const phone = ctx.update.message.contact.phone_number;
+			let phone: string = ctx.update.message.contact.phone_number;
+			if (!phone.includes('+')) phone += '+' + phone
 			const user = {
 				phone,
 				name: ctx.from.first_name? ctx.from.last_name ? `${ctx.from.first_name} ${ctx.from.last_name}` : ctx.from.first_name : '',
