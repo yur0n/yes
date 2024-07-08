@@ -54,7 +54,7 @@ bot.on('message', async ctx => {
 	}
 	if (ctx.msg.text === 'Wildeberries') {
 		ctx.reply('Wildeberries information', {
-			reply_markup: 
+			reply_markup: new InlineKeyboard().text('a')
 		})
 	}
 	// const user = await userModel.findOne({ telegram: ctx.from.id });
