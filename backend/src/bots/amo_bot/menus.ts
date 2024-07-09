@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 
 import { Menu } from "@grammyjs/menu";
 import { Keyboard } from "grammy";
@@ -14,15 +14,18 @@ const main = new Menu('main-menu')
 	.url('🤖 Сделать заказ через бота', 'https://t.me/Ozon_WB_Ali_zakaz_bot')
 
 export const mainMenu = new Keyboard()
-	.text('Wildeberries')
+	.text('Wildberries')
 	.text('OZON').row()
 	.text('Yandex')
 	.text('Apteka').row()
 	.text('📝 Мои данные');
 
-export const wildeberries = new Keyboard()
-	.text()
-
+export function shopMenu() {
+	return new Keyboard()
+	.text('Отправить QR-код')
+	.text('Активные заказы').row()
+	.text('В главное меню')
+}
 
 
 export default main

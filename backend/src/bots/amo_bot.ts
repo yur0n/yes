@@ -1,18 +1,18 @@
 
 
-import { Bot, session, Context, SessionFlavor, InlineKeyboard } from 'grammy'
+import { Bot, Api, session, Context, SessionFlavor, InlineKeyboard } from 'grammy'
+import { FileApiFlavor, FileFlavor, hydrateFiles } from "@grammyjs/files";
 import { conversations, createConversation, ConversationFlavor } from '@grammyjs/conversations'
-import { delPhone, addPhone, addClientInfo } from './amo_bot/conversations'
+import { delPhone, addPhone, addClientInfo, qrWB } from './amo_bot/conversations'
 import { deleteMsg, deleteMsgTime, replyAndDel } from './amo_bot/functions'
 import messageModel from '../models/message.model';
 import userModel from '../models/user.model';
-import { mainMenu } from './amo_bot/menus'
+import { mainMenu, shopMenu } from './amo_bot/menus'
+import main from './bot/menus';
 
-type MyContext = Context & SessionFlavor<{init: number}> & ConversationFlavor;
+type MyContext = Context & SessionFlavor<{init: number}> & ConversationFlavor & FileFlavor<Context> & FileApiFlavor<Api>;
 
-const bot = new Bot<MyContext>(process.env.AMO_BOT!)
-
-bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ])
+const bot = new Bot<MyContext>(process.env.AMO_BOT!);
 
 // bot.on('message', (ctx, next) => {
 // 	if (ctx.msg.text === '/start') {
@@ -26,14 +26,16 @@ bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ])
 // })
 
 
-
+bot.api.config.use(hydrateFiles(bot.token));
 bot.use(session({ initial: () => ({ init: 0 }) }));
 bot.use(conversations());
 bot.use(createConversation(addClientInfo));
+bot.use(createConversation(qrWB));
 bot.use(createConversation(delPhone));
 bot.use(createConversation(addPhone));
 //bot.use(main)
 
+bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ]);
 bot.command('start', async ctx => {
 	// if !user call conversation, if user - main menu
 	await ctx.conversation.enter('addClientInfo')
@@ -52,9 +54,20 @@ bot.on('message', async ctx => {
 												.text('Изменить информацию')
 		})
 	}
-	if (ctx.msg.text === 'Wildeberries') {
-		ctx.reply('Wildeberries information', {
-			reply_markup: new InlineKeyboard().text('a')
+	if (ctx.msg.text === 'Wildberries') {
+		ctx.reply('Wildeberries information (short example: на сайте ВБ оформите заказ и отправьте скриншот с QR-кодом', {
+			reply_markup: shopMenu()
+		})
+	}
+	if (ctx.msg.text === 'Отправить QR-код') {
+		await ctx.conversation.enter('qrWB')
+	}
+	if (ctx.msg.text === 'Активные заказы') {
+		//call to amo for contacts leads
+	}
+	if (ctx.msg.text === 'В главное меню') {
+		ctx.reply('Главное меню', {
+			reply_markup: mainMenu
 		})
 	}
 	// const user = await userModel.findOne({ telegram: ctx.from.id });

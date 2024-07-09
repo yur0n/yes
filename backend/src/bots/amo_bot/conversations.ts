@@ -35,7 +35,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 										.text('❌ Отменить')
 		});
 		ctx = await conversation.wait();
-		const station = ctx.update.callback_query?.data || ctx.msg.text
+		const station = ctx.update.callback_query?.data || ctx.msg.text;
 		if (!station || station === '❌ Отменить') return;
 		await ctx.reply('✅ Ваши данные сохранены!', {
 			reply_markup: mainMenu,
@@ -46,8 +46,27 @@ export async function addClientInfo(conversation: any, ctx: any) {
 
 	}
 }
+function genFileName(store: string, length = 8) {
+	const filename = Math.random().toString(36).substring(2, length + 2) + '_' + store;
+  return filename.replace(/[^a-z0-9]/gi, '_') + '.jpg';
+}
 
+export async function qrWB(conversation: any, ctx: any) {
+	try {
+		ctx.reply('Отправьте скриншот QR-кода в этот чат (отправить быстрым способом');
+		ctx = await conversation.wait();
+		if (!ctx.msg.photo) return ctx.reply('Неверный формат');
+		const photo = (await ctx.api.getFile(ctx.msg.photo[2].file_id));
+		const fileName = genFileName('WB')
+		await photo.download(`./public/a/${fileName}`)
+		const link = `http://176.119.156.143:90/a/${fileName}`
+		ctx.reply(link)
 
+	} catch (e) {
+		console.log(e)
+	}
+
+}
 
 
 

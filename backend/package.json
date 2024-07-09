@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@grammyjs/conversations": "^1.2.0",
+    "@grammyjs/files": "^1.1.1",
     "@grammyjs/menu": "^1.2.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",

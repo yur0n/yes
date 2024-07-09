@@ -11,6 +11,7 @@ const app = express();
 
 connect(environment.DB_URL, {});
 
+app.use(express.static('public'));
 app.use(express.json());
 // app.use(morgan('dev'));
 app.use(cors());
