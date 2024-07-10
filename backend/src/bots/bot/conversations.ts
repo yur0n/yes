@@ -24,8 +24,8 @@ export async function delPhone(conversation: any, ctx: any) {
 			deleteMsg(ctx, ctx.from.id, ctx.message.message_id);
 		}
 	} catch (error) {
-		console.log('Bot error:', error)
-		replyAndDel(ctx, `Системная ошибка, попробуйте позже`)
+		console.log('Bot error:', error);
+		replyAndDel(ctx, `Системная ошибка, попробуйте позже`);
 	}
 }
 
@@ -35,12 +35,11 @@ export async function addPhone(conversation: any, ctx: any) {
 			reply_markup: new Keyboard().requestContact('Поделиться').oneTime().resized()
 		});
 		ctx = await conversation.wait();
-		deleteMsg(ctx, ask.chat.id, ask.message_id)
-		if (ctx.update.callback_query?.data) return
+		deleteMsg(ctx, ask.chat.id, ask.message_id);
+		if (ctx.update.callback_query?.data) return;
 		deleteMsg(ctx, ctx.from.id, ctx.message.message_id);
 		if (ctx.update.message?.contact?.phone_number) {
-			let phone: string = ctx.update.message.contact.phone_number;
-			if (!phone.includes('+')) phone = '+' + phone
+			const phone: string = ctx.update.message.contact.phone_number;
 			const user = {
 				phone,
 				name: ctx.from.first_name? ctx.from.last_name ? `${ctx.from.first_name} ${ctx.from.last_name}` : ctx.from.first_name : '',

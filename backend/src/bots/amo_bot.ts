@@ -1,16 +1,34 @@
 
 
-import { Bot, Api, session, Context, SessionFlavor, InlineKeyboard } from 'grammy'
+import { Bot, Api, session, Context, SessionFlavor, InlineKeyboard } from 'grammy';
+import { freeStorage } from "@grammyjs/storage-free";
 import { FileApiFlavor, FileFlavor, hydrateFiles } from "@grammyjs/files";
-import { conversations, createConversation, ConversationFlavor } from '@grammyjs/conversations'
-import { delPhone, addPhone, addClientInfo, qrWB } from './amo_bot/conversations'
-import { deleteMsg, deleteMsgTime, replyAndDel } from './amo_bot/functions'
+import { conversations, createConversation, ConversationFlavor } from '@grammyjs/conversations';
+import { delPhone, addPhone, addClientInfo, QR } from './amo_bot/conversations';
+import { deleteMsg, deleteMsgTime, replyAndDel } from './amo_bot/functions';
 import messageModel from '../models/message.model';
 import userModel from '../models/user.model';
-import { mainMenu, shopMenu } from './amo_bot/menus'
-import main from './bot/menus';
+import { mainMenu, shopMenu } from './amo_bot/menus';
 
-type MyContext = Context & SessionFlavor<{init: number}> & ConversationFlavor & FileFlavor<Context> & FileApiFlavor<Api>;
+const shops = {
+	'Wildberries': 'WB',
+	'OZON': 'OZON',
+	'Yandex': 'YA',
+	'Золотое яблоко': 'ZY'
+}
+ 
+interface SessionData {
+  user: {
+		name?: string;
+		phone?: string;
+		city?: string;
+		delivery?: string;
+		amoId?: number;
+	}
+	shop?: string;
+}
+
+type MyContext = Context & SessionFlavor<SessionData> & ConversationFlavor & FileFlavor<Context> & FileApiFlavor<Api>;
 
 const bot = new Bot<MyContext>(process.env.AMO_BOT!);
 
@@ -27,62 +45,65 @@ const bot = new Bot<MyContext>(process.env.AMO_BOT!);
 
 
 bot.api.config.use(hydrateFiles(bot.token));
-bot.use(session({ initial: () => ({ init: 0 }) }));
+bot.use(session({ 
+	initial: () => ({ user: {} }), 
+	storage: freeStorage<SessionData>(bot.token) }));
 bot.use(conversations());
 bot.use(createConversation(addClientInfo));
-bot.use(createConversation(qrWB));
+bot.use(createConversation(QR));
 bot.use(createConversation(delPhone));
 bot.use(createConversation(addPhone));
-//bot.use(main)
 
 bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ]);
 bot.command('start', async ctx => {
-	// if !user call conversation, if user - main menu
-	await ctx.conversation.enter('addClientInfo')
-
-  // await ctx.reply('Привет, я бот для отслеживания посылок компании YES !\n\nПоделитесь своим номером телефона и я вам сообщу, когда и куда прибудет ваша посылка!\n\nYES-PVZ.RU', {
-	// 	reply_markup: main,
-	// });
+	if (ctx.session.user.phone) {
+		ctx.reply('Главное меню', {
+			reply_markup: mainMenu
+		})
+	} else {
+		await ctx.conversation.enter('addClientInfo')
+	}
 	return;
-})
+});
 
-bot.on('message', async ctx => {
+bot.on('message', async (ctx, next) => {
 	if (ctx.msg.text === '📝 Мои данные') {
-		const user = {telegram: 1111, name:"igor", phone: 213133}//await userModel.findOne({ telegram: ctx.from.id });
-		ctx.reply(`Telegram: ${ctx.from.id }\nФИО: ${user.name}\nНомер телефона: ${user.phone}`, {
+		const { name, phone, city, delivery } = ctx.session.user
+		ctx.reply(`Telegram: ${ctx.from.id}\nФИО: ${name || 'Не указано'}\nНомер телефона: ${phone || 'Не указан'}\nГород: ${city || 'Не указан'}\nПункт доставки: ${delivery || 'Не указан'}`, {
 			reply_markup: new InlineKeyboard()
 												.text('Изменить информацию')
 		})
 	}
-	if (ctx.msg.text === 'Wildberries') {
-		ctx.reply('Wildeberries information (short example: на сайте ВБ оформите заказ и отправьте скриншот с QR-кодом', {
+	const selectedShop = shops[ctx.msg.text as keyof typeof shops];
+	if (selectedShop) {
+		ctx.session.shop = selectedShop;
+		ctx.reply('Shop information (short example: на сайте ВБ оформите заказ и отправьте скриншот QR-кода, etc etc etc etc', {
 			reply_markup: shopMenu()
 		})
 	}
 	if (ctx.msg.text === 'Отправить QR-код') {
-		await ctx.conversation.enter('qrWB')
+		await ctx.conversation.enter('QR')
 	}
 	if (ctx.msg.text === 'Активные заказы') {
-		//call to amo for contacts leads
+		//call to amo for contacts leads (use ctx.session.shop)
+		ctx.reply('to be implemented', {
+			reply_markup: mainMenu
+		})
 	}
 	if (ctx.msg.text === 'В главное меню') {
 		ctx.reply('Главное меню', {
 			reply_markup: mainMenu
 		})
 	}
-	// const user = await userModel.findOne({ telegram: ctx.from.id });
-	// if (!user) return;
-	// await messageModel.create({
-	// 	userId: user._id.toString(),
-	// 	message: ctx.msg.text
-	// })
-})
+	next();
+});
 
-bot.on('callback_query', async ctx => {
+bot.on('callback_query', async (ctx, next) => {
 	if (ctx.update.callback_query?.data == 'Изменить информацию') {
 		await ctx.conversation.enter('addClientInfo')
 	}
-})
+	next();
+});
 
 
 bot.catch((err) => {
@@ -99,6 +120,6 @@ bot.catch((err) => {
 process.once("SIGINT", () => bot.stop());
 process.once("SIGTERM", () => bot.stop());
 
-bot.start()
+bot.start();
 
 export default bot;

@@ -19,7 +19,7 @@ async function sendNotification(users: IUser[]) {
 		for (const user of users) {
 			let reciver;
 			try {
-				reciver = await userModel.findOne({ phone: '+' + user.phone });
+				reciver = await userModel.findOne({ phone: user.phone });
 			} catch (e) {
 				user.goods.forEach(good => status.push({ row: good.row, status: false }));
 				continue;
