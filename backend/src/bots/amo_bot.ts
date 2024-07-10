@@ -19,6 +19,7 @@ const shops = {
  
 interface SessionData {
   user: {
+		telegram?: string;
 		name?: string;
 		phone?: string;
 		city?: string;
@@ -56,6 +57,7 @@ bot.use(createConversation(addPhone));
 
 bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ]);
 bot.command('start', async ctx => {
+	ctx.session.user.telegram = ctx.from?.id.toString();
 	if (ctx.session.user.phone) {
 		ctx.reply('Главное меню', {
 			reply_markup: mainMenu
@@ -68,8 +70,8 @@ bot.command('start', async ctx => {
 
 bot.on('message', async (ctx, next) => {
 	if (ctx.msg.text === '📝 Мои данные') {
-		const { name, phone, city, delivery } = ctx.session.user
-		ctx.reply(`Telegram: ${ctx.from.id}\nФИО: ${name || 'Не указано'}\nНомер телефона: ${phone || 'Не указан'}\nГород: ${city || 'Не указан'}\nПункт доставки: ${delivery || 'Не указан'}`, {
+		const { telegram, name, phone, city, delivery } = ctx.session.user
+		ctx.reply(`Telegram: ${telegram}\nФИО: ${name || 'Не указано'}\nНомер телефона: ${phone || 'Не указан'}\nГород: ${city || 'Не указан'}\nПункт доставки: ${delivery || 'Не указан'}`, {
 			reply_markup: new InlineKeyboard()
 												.text('Изменить информацию')
 		})

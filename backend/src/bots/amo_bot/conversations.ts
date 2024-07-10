@@ -4,6 +4,7 @@ import userModel from '../../models/user.model';
 import { InlineKeyboard, Keyboard } from 'grammy'
 import { mainMenu } from './menus'
 import { replyAndDel, deleteMsg, deleteMsgTime } from './functions'
+import { getContact, newLead } from './amo'
 
 
 function responseMenu(ctx: any, text: string) {
@@ -21,7 +22,7 @@ const deliveryPoints = {
 	'Мелитополь': {
 		text: `
 «Феникс» ▶️ ул. Кирова, 50/1, ТЦ Феникс\n\n
-«Рижский YES» ▶️ ул. 50 лет Победы, д. 29\n\n
+«Рижский» ▶️ ул. 50 лет Победы, д. 29\n\n
 «Новый Мелитополь» ▶️ ул. Гагарина 3\n\n
 «Авоська» ▶️ ул. 30 лет Победы, д. 42А\n\n
 «Черный» ▶️ пр Б. Хмельницкого 89\n\n
@@ -29,7 +30,7 @@ const deliveryPoints = {
 		`,
 		keyboard: () => new InlineKeyboard()
 									.text('Феникс')
-									.text('Рижский YES').row()
+									.text('Рижский').row()
 									.text('Новый Мелитополь')
 									.text('Авоська').row()
 									.text('Черный')
@@ -63,7 +64,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 	try {
 		await ctx.reply('👨 Пожалуйста, укажите Ваше ФИО (Иванов Иван Иванович)', {
 			reply_markup: new Keyboard()
-										.text('❌ Отменить')
+										.text('❌ Отменить').resized()
 										.oneTime()
 		})
 		ctx = await conversation.wait();
@@ -73,12 +74,12 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		await ctx.reply('📱 Укажите Ваш номер телефона для связи', {
 			reply_markup: new Keyboard()
 										.requestContact('Отправить мой номер').row()
-										.text('❌ Отменить')
+										.text('❌ Отменить').resized()
 										.oneTime()
 		});
 		ctx = await conversation.wait();
 		if (ctx.msg.text === '❌ Отменить') return responseMenu(ctx, 'Главное меню');
-		ctx.session.user.phone = ctx.update.message?.contact?.phone_number || ctx.msg.text;
+		ctx.session.user.phone = '+' + ctx.update.message?.contact?.phone_number || ctx.msg.text;
 
 		await ctx.reply('Выберите Ваш город', {
 			reply_markup: new InlineKeyboard()
@@ -115,13 +116,16 @@ export async function QR(conversation: any, ctx: any) {
 		ctx = await conversation.wait();
 		if (ctx.update.callback_query?.data == '❌ Отменить') return responseMenu(ctx, 'Главное меню');
 		if (!ctx.msg.photo) return responseMenu(ctx, 'Неверный формат');
-		const photo = await ctx.api.getFile(ctx.msg.photo[2].file_id);
+		const photo = await ctx.api.getFile(ctx.msg.photo[ctx.msg.photo.length - 1].file_id);
 		const fileName = genFileName(ctx.session.shop)
 		await photo.download(`./public/a/${fileName}`)
 		const qrLink = `admin.yes-pvz.ru:90/a/${fileName}`
-		responseMenu(ctx, '✅ QR-код добавлен!')
 
-		// form lead with contact info
+		const { telegram, name, phone, city, delivery, amoId } = ctx.session.user
+		const contact = await getContact(name, phone, telegram, amoId)
+		ctx.session.user.amoId = contact?.id
+		await newLead(contact, ctx.session.shop, city, delivery, qrLink)
+		responseMenu(ctx, '✅ QR-код добавлен. Ожидайте вашу посылку!')
 
 	} catch (e) {
 		console.log(e)
