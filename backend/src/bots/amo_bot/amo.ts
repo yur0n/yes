@@ -15,10 +15,10 @@ async function getContact(name, phone, city, delivery, id)  {
 	if (contact) return contact;
 
 	const newContact = new client.Contact;
-	newContact.name = 'TESTER TEST';
+	newContact.name = name;
 	newContact.custom_fields_values = [{
 		field_id: 1174897, //phone
-		values: [{value: '123456789'}]
+		values: [{value: phone}]
 	}];
 	await newContact.save();
 	return newContact;
