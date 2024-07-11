@@ -134,7 +134,7 @@ export async function QR(conversation: any, ctx: any) {
 		const qrLink = `admin.yes-pvz.ru:90/a/${fileName}`
 
 		const { telegram, name, phone, city, delivery, amoId } = ctx.session.user
-		if (!name || !phone || !telegram || !amoId || !city || !delivery) {
+		if (!name || !phone || !telegram || !city || !delivery) {
 			return responseMenu(ctx, '❌ QR-код не добавлен. Полностью заполните информацию о себе!')
 		}
 		const contact = await getContact(name, phone, telegram, amoId)
