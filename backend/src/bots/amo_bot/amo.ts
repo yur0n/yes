@@ -55,7 +55,7 @@ export async function getContact(name, phone, telegram, id)  {
 	console.log(name, phone, telegram, id)
 	let contact;
 	if (id) contact = await client.contacts.getById(id);
-	if (contact.id) return contact;
+	if (contact?.id) return contact;
 
 	const newContact = new client.Contact;
 	newContact.name = name;

@@ -13,7 +13,7 @@ import { Keyboard } from "grammy";
 // 	.url('💬 Связаться с менеджером', 'https://t.me/WB_OZON_YES').row()
 // 	.url('🤖 Сделать заказ через бота', 'https://t.me/Ozon_WB_Ali_zakaz_bot')
 
-export const mainMenu = new Keyboard()
+export const mainMenu = new Keyboard().resized()
 	.text('Wildberries')
 	.text('OZON').row()
 	.text('Yandex')
@@ -21,7 +21,7 @@ export const mainMenu = new Keyboard()
 	.text('📝 Мои данные');
 
 export function shopMenu() {
-	return new Keyboard()
+	return new Keyboard().resized()
 	.text('Отправить QR-код')
 	.text('Активные заказы').row()
 	.text('В главное меню')

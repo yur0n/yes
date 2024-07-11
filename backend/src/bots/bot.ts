@@ -46,7 +46,7 @@ bot.on('message', async ctx => {
 	if (!user) return;
 	await messageModel.create({
 		userId: user._id.toString(),
-		message: ctx.msg.text
+		message: ctx.msg.text || 'СООБЩЕНИЕ НЕ ОПРЕДЕЛЕНО'
 	})
 })
 
