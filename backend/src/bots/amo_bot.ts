@@ -6,7 +6,7 @@ import { FileApiFlavor, FileFlavor, hydrateFiles } from "@grammyjs/files";
 import { conversations, createConversation, ConversationFlavor } from '@grammyjs/conversations';
 import { addClientInfo, QR } from './amo_bot/conversations';
 import { deleteMsg, deleteMsgTime, replyAndDel } from './amo_bot/functions';
-import { getContact } from './amo_bot/amo'
+import { getLeads } from './amo_bot/amo'
 import { mainMenu } from './amo_bot/menus';
 
 const shops = {
@@ -26,6 +26,7 @@ interface SessionData {
 		amoId?: number;
 	}
 	shop?: string;
+	leads?: [];
 }
 
 type MyContext = Context & SessionFlavor<SessionData> & ConversationFlavor & FileFlavor<Context> & FileApiFlavor<Api>;
@@ -46,7 +47,7 @@ const bot = new Bot<MyContext>(process.env.AMO_BOT!);
 
 bot.api.config.use(hydrateFiles(bot.token));
 bot.use(session({ 
-	initial: () => ({ user: {} }), 
+	initial: () => ({ user: {}, shop: '', leads: [] }), 
 	storage: freeStorage<SessionData>(bot.token) }));
 bot.use(conversations());
 bot.use(createConversation(addClientInfo));
@@ -80,11 +81,10 @@ bot.on('message', async (ctx, next) => {
 		await ctx.conversation.enter('QR')
 	}
 	if (ctx.msg.text === 'Мои заказы') {
-		if (!ctx.session.user.amoId) {
+		if (!ctx.session.leads?.length) {
 			return ctx.reply('Вы еще не сделали ниодного заказа')
 		}
-		console.log(await getContact(ctx.session.user.amoId))
-		ctx.reply('to be implemented')
+		ctx.reply(await getLeads(ctx.session.leads))
 	}
 	next();
 });

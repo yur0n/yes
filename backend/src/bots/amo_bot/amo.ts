@@ -4,21 +4,58 @@ import { Client } from 'amocrm-js'
 import { pipeline } from 'stream';
 
 const pipelines = {
-	'OZON': {
-		pipelineId: 7000654,
-		statusId: 58771906
+	'OZON': 7000654,
+	'WB': 7022614,
+	'YA': 7260770,
+	'ZY': 7260794,
+}
+
+const pipelinesReverse = {
+	7000654: 'OZON',
+	7022614: 'Wildberries',
+	7260770: 'Yandex',
+	7260794: 'Золотое яблоко',
+}
+
+const statuses = {
+	7000654: {
+		58771906: 'Неразобранное',
+		59223350: 'Обработка',
+		58771914: 'Сортировка',
+		58929210: 'В пути',
+		65557398: 'Не доехал',
+		59013162: 'На пункте',
+		142: 'Выдано',
+		143: 'Закрыто и не реализовано'
 	},
-	'WB': {
-		pipelineId: 7022614,
-		statusId: 58920302
+	7022614: {
+		58920302: 'Неразобранное',
+		65557390: 'Выдано',
+		59223322: 'Обработка',
+		58920306: 'Сортировка',
+		58920314: 'В пути',
+		65557394: 'Не доехал',
+		59013154: 'На пункте',
+		142: 'Выдано',
+		143: 'Закрыто и не реализовано'
 	},
-	'YA': {
-		pipelineId: 7260770,
-		statusId: 58771906
+	7260770: {
+		60533134: 'Неразобранное',
+		60533138: 'Обработка',
+		60533142: 'Сортировка',
+		60533146: 'В пути',
+		60533302: 'На пункте',
+		142: 'Выдано',
+		143: 'Закрыто и не реализовано'
 	},
-	'ZY': {
-		pipelineId: 7260794,
-		statusId: 60533134
+	7260794: {
+		60533306: 'Неразобранное',
+		60533310: 'Обработка',
+		60533314: 'Отсортирован',
+		60533318: 'В пути',
+		64357918: 'На пункте',
+		142: 'Выдано',
+		143: 'Закрыто и не реализовано'
 	}
 }
 
@@ -50,12 +87,8 @@ const client = new Client({
 	},
 });
 
-export async function getContact(id) {
-	const contact = await client.contacts.getById(id);
-	if (contact?.id) return contact;
-}
 
-export async function getOrNewContact(name, phone, telegram, id)  {
+export async function getContact(name, phone, telegram, id)  {
 	console.log(name, phone, telegram, id)
 	let contact;
 	if (id) contact = await client.contacts.getById(id);
@@ -79,7 +112,7 @@ export async function getOrNewContact(name, phone, telegram, id)  {
 
 export async function newLead(contact, shop, city, delivery, qrLink) {
 	const lead = new client.Lead('123');
-	lead.pipeline_id = pipelines[shop].pipelineId
+	lead.pipeline_id = pipelines[shop]
 	// lead.status_id = pipelines[shop].statusId
 	lead.custom_fields_values = [
 		{
@@ -97,5 +130,23 @@ export async function newLead(contact, shop, city, delivery, qrLink) {
 	]);
 
 	await lead.save();
+	return lead
+}
+
+export async function getLeads(ids) {
+	console.log(ids)
+	const response = await client.request.get('/api/v4/leads', {
+		filter: {
+			id: ids
+		}
+	})
+	const leads = response.data._embedded?.leads
+	let message = ``
+	leads.forEach(lead => {
+		message += `${lead.name}: ${pipelinesReverse[lead.pipeline_id]}: ${statuses[lead.pipeline_id][lead.status_id]}\n\n`
+	});
+	console.dir(response.data._embedded?.leads)
+	return message
+
 }
 

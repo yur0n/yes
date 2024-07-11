@@ -1,7 +1,7 @@
 import { InlineKeyboard, Keyboard } from 'grammy'
 import { mainMenu } from './menus'
 import { replyAndDel, deleteMsg, deleteMsgTime } from './functions'
-import { newLead, getOrNewContact } from './amo'
+import { newLead, getContact } from './amo'
 
 
 function responseMenu(ctx: any, text: string) {
@@ -137,9 +137,12 @@ export async function QR(conversation: any, ctx: any) {
 		if (!name || !phone || !telegram || !city || !delivery) {
 			return responseMenu(ctx, '❌ QR-код не добавлен. Полностью заполните информацию о себе!')
 		}
-		const contact = await getOrNewContact(name, phone, telegram, amoId)
+		const contact = await getContact(name, phone, telegram, amoId)
 		ctx.session.user.amoId = contact?.id
-		await newLead(contact, ctx.session.shop, city, delivery, qrLink)
+		const lead = await newLead(contact, ctx.session.shop, city, delivery, qrLink)
+		const leads = ctx.session.leads ? ctx.session.leads : []
+		leads.push(lead.id)
+		ctx.session.leads = leads;
 		responseMenu(ctx, '✅ QR-код добавлен. Ожидайте вашу посылку!')
 
 	} catch (e) {
