@@ -33,18 +33,6 @@ type MyContext = Context & SessionFlavor<SessionData> & ConversationFlavor & Fil
 
 const bot = new Bot<MyContext>(process.env.AMO_BOT!);
 
-// bot.on('message', (ctx, next) => {
-// 	if (ctx.msg.text === '/start') {
-// 		deleteMsgTime(ctx, ctx.message.chat.id, ctx.message.message_id, 60_000);
-// 		return next();
-// 	}
-
-// 	// deleteMsg(ctx, ctx.from.id, ctx.message.message_id);
-// 	// replyAndDel(ctx, 'Я предназначен только для уведомлений о прибытии ваших заказов');
-// 	next();
-// })
-
-
 bot.api.config.use(hydrateFiles(bot.token));
 bot.use(session({ 
 	initial: () => ({ user: {}, shop: '', leads: [] }), 

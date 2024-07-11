@@ -118,13 +118,14 @@ export async function addClientInfo(conversation: any, ctx: any) {
 
 export async function QR(conversation: any, ctx: any) {
 	try {
-		const ask = ctx.reply('Отправьте скриншот QR-кода с маркетплейса в этот чат (с компрессией)\n\nПодробнее: https://wb-pvz.ru', {
+		ctx.reply('Отправьте скриншот QR-кода с маркетплейса в этот чат (с компрессией)\n\nПодробнее: https://wb-pvz.ru', {
 			reply_markup: new InlineKeyboard()
 										.text('❌ Отменить')
 		})
 		ctx = await conversation.wait();
-		if (ctx.update.callback_query?.data == '❌ Отменить') {
-			await deleteMsg(ctx, ask.chat.id, ask.message_id)
+		const callback = ctx.update.callback_query
+		if (callback?.data == '❌ Отменить') {
+			await deleteMsg(ctx, callback?.from.id, callback?.message.message_id)
 			return responseMenu(ctx, 'Главное меню');
 		} 
 		if (!ctx.msg.photo) return responseMenu(ctx, '❌ Неверный формат');
@@ -138,6 +139,7 @@ export async function QR(conversation: any, ctx: any) {
 			return responseMenu(ctx, '❌ QR-код не добавлен. Полностью заполните информацию о себе!')
 		}
 		const contact = await getContact(name, phone, telegram, amoId)
+
 		ctx.session.user.amoId = contact?.id
 		const lead = await newLead(contact, ctx.session.shop, city, delivery, qrLink)
 		const leads = ctx.session.leads ? ctx.session.leads : []
