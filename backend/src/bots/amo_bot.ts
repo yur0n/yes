@@ -4,11 +4,10 @@ import { Bot, Api, session, Context, SessionFlavor, InlineKeyboard } from 'gramm
 import { freeStorage } from "@grammyjs/storage-free";
 import { FileApiFlavor, FileFlavor, hydrateFiles } from "@grammyjs/files";
 import { conversations, createConversation, ConversationFlavor } from '@grammyjs/conversations';
-import { delPhone, addPhone, addClientInfo, QR } from './amo_bot/conversations';
+import { addClientInfo, QR } from './amo_bot/conversations';
 import { deleteMsg, deleteMsgTime, replyAndDel } from './amo_bot/functions';
-import messageModel from '../models/message.model';
-import userModel from '../models/user.model';
-import { mainMenu, shopMenu } from './amo_bot/menus';
+import { getContact } from './amo_bot/amo'
+import { mainMenu } from './amo_bot/menus';
 
 const shops = {
 	'Wildberries': 'WB',
@@ -52,8 +51,6 @@ bot.use(session({
 bot.use(conversations());
 bot.use(createConversation(addClientInfo));
 bot.use(createConversation(QR));
-bot.use(createConversation(delPhone));
-bot.use(createConversation(addPhone));
 
 bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ]);
 bot.command('start', async ctx => {
@@ -73,37 +70,33 @@ bot.on('message', async (ctx, next) => {
 		const { telegram, name, phone, city, delivery } = ctx.session.user
 		ctx.reply(`Telegram: ${telegram}\nФИО: ${name || 'Не указано'}\nНомер телефона: ${phone || 'Не указан'}\nГород: ${city || 'Не указан'}\nПункт доставки: ${delivery || 'Не указан'}`, {
 			reply_markup: new InlineKeyboard()
-												.text('Изменить информацию')
+												.text('Изменить')
+												.text('Скрыть')
 		})
-	}
+	} 
 	const selectedShop = shops[ctx.msg.text as keyof typeof shops];
 	if (selectedShop) {
 		ctx.session.shop = selectedShop;
-		ctx.reply('Shop information (short example: на сайте ВБ оформите заказ и отправьте скриншот QR-кода, etc etc etc etc', {
-			reply_markup: shopMenu()
-		})
-	}
-	if (ctx.msg.text === 'Отправить QR-код') {
 		await ctx.conversation.enter('QR')
 	}
-	if (ctx.msg.text === 'Активные заказы') {
-		//call to amo for contacts leads (use ctx.session.shop)
-		ctx.reply('to be implemented', {
-			reply_markup: mainMenu
-		})
-	}
-	if (ctx.msg.text === 'В главное меню') {
-		ctx.reply('Главное меню', {
-			reply_markup: mainMenu
-		})
+	if (ctx.msg.text === 'Мои заказы') {
+		if (!ctx.session.user.amoId) {
+			return ctx.reply('Вы еще не сделали ниодного заказа')
+		}
+		console.log(await getContact(ctx.session.user.amoId))
+		ctx.reply('to be implemented')
 	}
 	next();
 });
 
 bot.on('callback_query', async (ctx, next) => {
-	if (ctx.update.callback_query?.data == 'Изменить информацию') {
+	const callback = ctx.update.callback_query
+	if (callback?.data == 'Изменить') {
 		await ctx.conversation.enter('addClientInfo')
 	}
+	if (callback?.data == 'Скрыть') {
+		deleteMsg(ctx, callback?.from.id, callback?.message?.message_id || 1)
+	} 
 	next();
 });
 

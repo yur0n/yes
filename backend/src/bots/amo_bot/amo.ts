@@ -50,8 +50,12 @@ const client = new Client({
 	},
 });
 
+export async function getContact(id) {
+	const contact = await client.contacts.getById(id);
+	if (contact?.id) return contact;
+}
 
-export async function getContact(name, phone, telegram, id)  {
+export async function getOrNewContact(name, phone, telegram, id)  {
 	console.log(name, phone, telegram, id)
 	let contact;
 	if (id) contact = await client.contacts.getById(id);
@@ -74,8 +78,6 @@ export async function getContact(name, phone, telegram, id)  {
 }
 
 export async function newLead(contact, shop, city, delivery, qrLink) {
-	console.log(shop, city, delivery, qrLink)
-	console.log(deliveryIds[city][delivery])
 	const lead = new client.Lead('123');
 	lead.pipeline_id = pipelines[shop].pipelineId
 	// lead.status_id = pipelines[shop].statusId
@@ -96,3 +98,4 @@ export async function newLead(contact, shop, city, delivery, qrLink) {
 
 	await lead.save();
 }
+
