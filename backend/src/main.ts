@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 
 import './bots/bot'
+import './bots/amo_bot'
 
 const app = express();
 
