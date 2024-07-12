@@ -25,7 +25,7 @@ export async function amoLeadChange (req: Request, res: Response) {
 		const price = leads.update[0].price;
 
 		console.log(name,tgID, pipeline, mesta, punkt, price)
-		const message = `${name} из ${pipeline} 🟢Прибыл в пункт: ${punkt}. Стоимость: ${price || 'не указано'}, Количество мест: ${mesta || 'не указано'}`
+		const message = `${name} из ${pipeline}\n\n🟢Прибыл в пункт: ${punkt}\n\nСумма заказа: ${price || 'не указана'} р.\n\nКоличество мест: ${mesta || 'не указано'}`
 		await bot.api.sendMessage(tgID, message)
 		res.send('ok')
 	} catch (e) {
