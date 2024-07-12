@@ -2,6 +2,7 @@ import express from 'express';
 import { connect } from 'mongoose';
 import { environment } from './environments/environment';
 import apiRoutes from './api';
+import amoRoutes from './amo';
 import morgan from 'morgan';
 import cors from 'cors';
 
@@ -28,6 +29,7 @@ app.use((req, res, next) => {
 //   next();
 // });
 app.use('/api', apiRoutes);
+app.use('/amo', amoRoutes);
 
 const PORT = process.env.PORT || 3001;
 const server = app.listen(PORT, () => {

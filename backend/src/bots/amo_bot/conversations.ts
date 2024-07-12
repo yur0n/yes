@@ -118,7 +118,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 
 export async function QR(conversation: any, ctx: any) {
 	try {
-		ctx.reply('Отправьте скриншот QR-кода с маркетплейса в этот чат (с компрессией)\n\nПодробнее: https://wb-pvz.ru', {
+		ctx.reply('Отправьте скриншот QR-кода с маркетплейса в этот чат\n\nПодробнее: https://wb-pvz.ru', {
 			reply_markup: new InlineKeyboard()
 										.text('❌ Отменить')
 		})
