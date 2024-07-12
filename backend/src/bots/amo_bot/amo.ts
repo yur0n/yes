@@ -83,6 +83,33 @@ const deliveryIds = {
 	}
 }
 
+function formatDate(unix) {
+	const dateObject = new Date(unix * 1000);
+	const date =  dateObject.toLocaleString('en-GB', {
+		day: '2-digit',
+		month: '2-digit',
+		year: '2-digit',
+		// hour: '2-digit',
+		// minute: '2-digit',
+		hour12: false,
+	})
+	return date
+}
+
+function statusesSort(a, b) {
+	const statusA = statuses[a.pipeline_id][a.status_id] || 'skip';
+	const statusB = statuses[b.pipeline_id][b.status_id] || 'skip';
+
+	const statusOrder = {
+    '🟢Прибыл в Пункт': 1,
+    '🟠В пути': 2,
+    '🟡Сортируется': 3,
+    '🔵В обработке': 4,
+    '🟣Принят': 5,
+  };
+	return statusOrder[statusA] - statusOrder[statusB] || statusA.localeCompare(statusB);
+}
+
 const client = new Client({
 	domain: process.env.AMO_LOGIN!,
 	auth: {
@@ -163,33 +190,6 @@ export async function getLeads(ids) {
 	if (!message.length) messgae = 'Активные заказы отсутствуют';
 	return message
 
-}
-
-function formatDate(unix) {
-	const dateObject = new Date(unix * 1000);
-	const date =  dateObject.toLocaleString('en-GB', {
-		day: '2-digit',
-		month: '2-digit',
-		year: '2-digit',
-		// hour: '2-digit',
-		// minute: '2-digit',
-		hour12: false,
-	})
-	return date
-}
-
-function statusesSort(a, b) {
-	const statusA = statuses[a.pipeline_id][a.status_id] || 'skip';
-	const statusB = statuses[b.pipeline_id][b.status_id] || 'skip';
-
-	const statusOrder = {
-    '🟢Прибыл в Пункт': 1,
-    '🟠В пути': 2,
-    '🟡Сортируется': 3,
-    '🔵В обработке': 4,
-    '🟣Принят': 5,
-  };
-	return statusOrder[statusA] - statusOrder[statusB] || statusA.localeCompare(statusB);
 }
 
 

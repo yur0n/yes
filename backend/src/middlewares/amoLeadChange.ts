@@ -1,9 +1,38 @@
 import { Request, Response } from 'express';
 import bot from '../bots/amo_bot';
 
+const pipelines = {
+	'7000654': 'OZON',
+	'7022614': 'Wildberries',
+	'7260770': 'Yandex',
+	'7260794': 'Золотое яблоко',
+}
+
+const arrivedStatuses = ['59013162', '59013154', '60533302', '64357918']
+
 export async function amoLeadChange (req: Request, res: Response) {
-	console.dir(req.body);
-	res.send('ok')
+	try {
+		const { leads } = req.body;
+		const leadStatus = leads.update[0].status_id
+		const tgID = leads.update[0].custom_fields.find((field: {name: string})  => field.name === 'tgID')?.values[0].value
+		if (!arrivedStatuses.includes(leadStatus) || !tgID) {
+			return res.send('ok')
+		}
+		const name = `Заказ ${leads.update[0].id}`
+		const pipeline = pipelines[leads.update[0].pipeline_id as keyof typeof pipelines]
+		const mesta = leads.update[0].custom_fields.find((field: {name: string}) => field.name === 'Количество мест')?.values[0].value;
+		const punkt = leads.update[0].custom_fields.find((field: {name: string}) => field.name === 'Выбрать пункт')?.values[0].value;
+		const price = leads.update[0].price;
+
+		console.log(name,tgID, pipeline, mesta, punkt, price)
+		const message = `${name} из ${pipeline} 🟢Прибыл в пункт: ${punkt}. Стоимость: ${price || 'не указано'}, Количество мест: ${mesta || 'не указано'}`
+		await bot.api.sendMessage(tgID, message)
+		res.send('ok')
+	} catch (e) {
+		console.log(e);
+		res.send('ok')
+	}
+	
 	// const users: IUser[] = req.body
 	// if (!users?.length ) {
 	// 	res.status(400).send('Invalid data');
