@@ -141,7 +141,7 @@ export async function QR(conversation: any, ctx: any) {
 		const contact = await getContact(name, phone, telegram, amoId)
 
 		ctx.session.user.amoId = contact?.id
-		const lead = await newLead(contact, ctx.session.shop, city, delivery, qrLink)
+		const lead = await newLead(contact, telegram, ctx.session.shop, city, delivery, qrLink)
 		const leads = ctx.session.leads ? ctx.session.leads : []
 		leads.push(lead.id)
 		ctx.session.leads = leads;
