@@ -119,7 +119,6 @@ const client = new Client({
 
 
 export async function getContact(name, phone, telegram, id)  {
-	console.log(name, phone, telegram, id)
 	let contact;
 	if (id) contact = await client.contacts.getById(id);
 	if (contact?.id) return contact;
@@ -169,7 +168,6 @@ export async function newLead(contact, telegram, shop, city, delivery, qrLink) {
 
 const colors = '⚪🔴🟠🟡🟢🔵🟣🟤⚫⭕🔘🧿'
 export async function getLeads(ids) {
-	console.log(ids)
 	const response = await client.request.get('/api/v4/leads', {
 		filter: {
 			id: ids
@@ -183,11 +181,11 @@ export async function getLeads(ids) {
 		const mesta = lead.custom_fields_values.find(obj => obj.field_name === 'Количество мест')?.values[0].value;
 		const punkt = lead.custom_fields_values.find(obj => obj.field_name === 'Выбрать пункт')?.values[0].value;
 		const name = lead.name.replace('Сделка #', 'Заказ ');
-		message += `${name} от ${date}: ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id][lead.status_id]}\n\n`
+		message += `📦${name} от ${date}: ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id][lead.status_id]}\n\n`
 		
 		// message += `${name}, ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id][lead.status_id]}, Стоимость: ${lead.price || 'не указано'}, Количество мест: ${mesta || 'не указано'}, Пункт получения: ${punkt} \n\n`
 	});
-	if (!message.length) messgae = 'Активные заказы отсутствуют';
+	if (!message.length) message = '⚪ Активные заказы отсутствуют';
 	return message
 
 }

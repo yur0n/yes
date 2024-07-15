@@ -45,7 +45,7 @@ bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ]);
 bot.command('start', async ctx => {
 	ctx.session.user.telegram = ctx.from?.id.toString();
 	if (ctx.session.user.phone) {
-		ctx.reply('Главное меню', {
+		ctx.reply('☰ Главное меню', {
 			reply_markup: mainMenu
 		})
 	} else {
@@ -59,8 +59,8 @@ bot.on('message', async (ctx, next) => {
 		const { telegram, name, phone, city, delivery } = ctx.session.user
 		ctx.reply(`Telegram: ${telegram}\nФИО: ${name || 'Не указано'}\nНомер телефона: ${phone || 'Не указан'}\nГород: ${city || 'Не указан'}\nПункт доставки: ${delivery || 'Не указан'}`, {
 			reply_markup: new InlineKeyboard()
-												.text('Изменить')
-												.text('Скрыть')
+												.text('✏️ Изменить')
+												.text('👁 Скрыть')
 		})
 	} 
 	const selectedShop = shops[ctx.msg.text as keyof typeof shops];
@@ -68,9 +68,9 @@ bot.on('message', async (ctx, next) => {
 		ctx.session.shop = selectedShop;
 		await ctx.conversation.enter('QR')
 	}
-	if (ctx.msg.text === 'Мои заказы') {
+	if (ctx.msg.text === '📦 Мои заказы') {
 		if (!ctx.session.leads?.length) {
-			return ctx.reply('Вы еще не сделали ниодного заказа')
+			return ctx.reply('⚪ Вы еще не сделали ниодного заказа')
 		}
 		ctx.reply(await getLeads(ctx.session.leads))
 	}
@@ -79,10 +79,10 @@ bot.on('message', async (ctx, next) => {
 
 bot.on('callback_query', async (ctx, next) => {
 	const callback = ctx.update.callback_query
-	if (callback?.data == 'Изменить') {
+	if (callback?.data == '✏️ Изменить') {
 		await ctx.conversation.enter('addClientInfo')
 	}
-	if (callback?.data == 'Скрыть') {
+	if (callback?.data == '👁 Скрыть') {
 		deleteMsg(ctx, callback?.from.id, callback?.message?.message_id || 1)
 	} 
 	next();

@@ -65,7 +65,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 										.oneTime()
 		})
 		ctx = await conversation.wait();
-		if (ctx.msg.text === '❌ Отменить' || !ctx.msg.text) return responseMenu(ctx, 'Главное меню');
+		if (ctx.msg.text === '❌ Отменить' || !ctx.msg.text) return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.name = ctx.msg.text;
 
 		await ctx.reply('📱 Укажите Ваш номер телефона для связив формате +79123456789 или +380123456789', {
@@ -75,7 +75,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 										.oneTime()
 		});
 		ctx = await conversation.wait();
-		if (ctx.msg.text === '❌ Отменить') return responseMenu(ctx, 'Главное меню');
+		if (ctx.msg.text === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		if (ctx.update.message?.contact?.phone_number) {
 			ctx.session.user.phone = '+' + ctx.update.message?.contact?.phone_number;
 		} else if (ctx.msg.text) {
@@ -90,7 +90,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 			return ctx.conversation.enter('addClientInfo')
 		}
 
-		await ctx.reply('Выберите Ваш город', {
+		await ctx.reply('🏙️ Выберите Ваш город', {
 			reply_markup: new InlineKeyboard()
 										.text('Мелитополь')
 										.text('Бердянск')
@@ -99,16 +99,16 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		});
 		ctx = await conversation.wait();
 		const city = ctx.update.callback_query?.data;
-		if (!city || city === '❌ Отменить') return responseMenu(ctx, 'Главное меню');
+		if (!city || city === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.city = city;
 
 		const selectedCity = deliveryPoints[city as keyof typeof deliveryPoints];
-		await ctx.reply(`Выберите пункт получения посылок:\n\n` + selectedCity.text, {
+		await ctx.reply(`📍 Выберите пункт получения посылок:\n\n` + selectedCity.text, {
 			reply_markup: selectedCity.keyboard()
 		});
 		ctx = await conversation.wait();
 		const delivery = ctx.update.callback_query?.data;
-		if (!delivery || delivery === '❌ Отменить') return responseMenu(ctx, 'Главное меню');
+		if (!delivery || delivery === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.delivery = delivery;
 		responseMenu(ctx, '✅ Ваши данные сохранены!')
 	} catch (e) {
@@ -118,7 +118,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 
 export async function QR(conversation: any, ctx: any) {
 	try {
-		ctx.reply('Отправьте скриншот QR-кода с маркетплейса в этот чат\n\nПодробнее: https://wb-pvz.ru', {
+		ctx.reply('🀫 Прикрепите скриншот QR-кода с помщью <u>скрепки</u> и нажмите отправить!', {
 			reply_markup: new InlineKeyboard()
 										.text('❌ Отменить')
 		})
@@ -126,7 +126,7 @@ export async function QR(conversation: any, ctx: any) {
 		const callback = ctx.update.callback_query
 		if (callback?.data == '❌ Отменить') {
 			await deleteMsg(ctx, callback?.from.id, callback?.message.message_id)
-			return responseMenu(ctx, 'Главное меню');
+			return responseMenu(ctx, '☰ Главное меню');
 		} 
 		if (!ctx.msg.photo) return responseMenu(ctx, '❌ Неверный формат');
 		const photo = await ctx.api.getFile(ctx.msg.photo[ctx.msg.photo.length - 1].file_id);

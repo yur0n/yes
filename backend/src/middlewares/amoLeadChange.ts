@@ -14,7 +14,7 @@ export async function amoLeadChange (req: Request, res: Response) {
 	try {
 		const { leads } = req.body;
 		const leadStatus = leads.update[0].status_id
-		const tgID = leads.update[0].custom_fields.find((field: {name: string})  => field.name === 'tgID')?.values[0].value
+		const tgID = leads.update[0].custom_fields?.find((field: {name: string})  => field.name === 'tgID')?.values[0].value
 		if (!arrivedStatuses.includes(leadStatus) || !tgID) {
 			return res.send('ok')
 		}
@@ -24,8 +24,7 @@ export async function amoLeadChange (req: Request, res: Response) {
 		const punkt = leads.update[0].custom_fields.find((field: {name: string}) => field.name === 'Выбрать пункт')?.values[0].value;
 		const price = leads.update[0].price;
 
-		console.log(name,tgID, pipeline, mesta, punkt, price)
-		const message = `${name} из ${pipeline}\n\n🟢Прибыл в пункт: ${punkt}\n\nСумма заказа: ${price || 'не указана'} р.\n\nКоличество мест: ${mesta || 'не указано'}`
+		const message = `📦${name} из ${pipeline}\n\n🟢Прибыл в пункт: ${punkt}\n\n💵Сумма заказа: ${price || 'не указана'} р.\n\n🎫Количество мест: ${mesta || 'не указано'}`
 		await bot.api.sendMessage(tgID, message)
 		res.send('ok')
 	} catch (e) {
