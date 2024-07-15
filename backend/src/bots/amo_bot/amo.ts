@@ -173,8 +173,15 @@ export async function getLeads(ids) {
 			id: ids
 		}
 	})
-	const leads = response.data._embedded?.leads.sort(statusesSort)
+
+	const leads = response.data._embedded?.leads.sort(statusesSort);
 	let message = ``
+
+	if (!leads?.length) {
+		message = '⚪ Активные заказы отсутствуют';
+		return message;
+	}
+	
 	leads.forEach(lead => {
 		if (!statuses[lead.pipeline_id][lead.status_id]) return;
 		const date = formatDate(lead.created_at)
