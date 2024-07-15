@@ -3,7 +3,7 @@ import path from 'path';
 
 console.log(process.cwd());
 
-function isFileOldEnough(filePath: string, threshold = 10_000) {// 5 * 24 * 60 * 60 * 1000
+function isFileOldEnough(filePath: string, threshold = 5 * 24 * 60 * 60 * 1000) { //every 5 days
   const fileStats = fs.statSync(filePath);
   const fileTime = fileStats.mtimeMs;
   const currentTime = Date.now();
@@ -30,10 +30,9 @@ function cleanOldImages(directoryPath: string) {
   });
 }
 
-const imageDirectory = './public/a'; // Replace with your image directory path
+const imageDirectory = './public/a';
 
-const interval = 1000 * 60// 1000 * 60 * 60; // Run every hour (in milliseconds)
-
+const interval = 1 * 24 * 60 * 60 * 1000 //everyday
 setInterval(() => {
 	try {
 		cleanOldImages(imageDirectory);
