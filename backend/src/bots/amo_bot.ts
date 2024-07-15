@@ -10,10 +10,10 @@ import { getLeads } from './amo_bot/amo'
 import { mainMenu } from './amo_bot/menus';
 
 const shops = {
-	'Wildberries': 'WB',
-	'OZON': 'OZON',
-	'Yandex': 'YA',
-	'Золотое яблоко': 'ZY'
+	'🟪 Wildberries': 'WB',
+	'🟦 OZON': 'OZON',
+	'🟧 Yandex': 'YA',
+	'🟨 Золотое яблоко': 'ZY'
 }
  
 interface SessionData {
@@ -57,7 +57,7 @@ bot.command('start', async ctx => {
 bot.on('message', async (ctx, next) => {
 	if (ctx.msg.text === '📝 Мои данные') {
 		const { telegram, name, phone, city, delivery } = ctx.session.user
-		ctx.reply(`Telegram: ${telegram}\nФИО: ${name || 'Не указано'}\nНомер телефона: ${phone || 'Не указан'}\nГород: ${city || 'Не указан'}\nПункт доставки: ${delivery || 'Не указан'}`, {
+		ctx.reply(`🌐Telegram: ${telegram}\n👨ФИО: ${name || 'Не указано'}\n📱Номер телефона: ${phone || 'Не указан'}\n🏙️Город: ${city || 'Не указан'}\n📍Пункт доставки: ${delivery || 'Не указан'}`, {
 			reply_markup: new InlineKeyboard()
 												.text('✏️ Изменить')
 												.text('👁 Скрыть')

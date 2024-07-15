@@ -2,6 +2,7 @@ import { InlineKeyboard, Keyboard } from 'grammy'
 import { mainMenu } from './menus'
 import { replyAndDel, deleteMsg, deleteMsgTime } from './functions'
 import { newLead, getContact } from './amo'
+import { parse } from 'path'
 
 
 function responseMenu(ctx: any, text: string) {
@@ -68,7 +69,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		if (ctx.msg.text === '❌ Отменить' || !ctx.msg.text) return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.name = ctx.msg.text;
 
-		await ctx.reply('📱 Укажите Ваш номер телефона для связив формате +79123456789 или +380123456789', {
+		await ctx.reply('📱 Укажите Ваш номер телефона для связи в формате +79123456789 или +380123456789', {
 			reply_markup: new Keyboard()
 										.requestContact('Отправить мой номер').row()
 										.text('❌ Отменить').resized()
@@ -118,7 +119,8 @@ export async function addClientInfo(conversation: any, ctx: any) {
 
 export async function QR(conversation: any, ctx: any) {
 	try {
-		ctx.reply('🀫 Прикрепите скриншот QR-кода с помщью <u>скрепки</u> и нажмите отправить!', {
+		ctx.reply('🏿 Прикрепите скриншот QR-кода с помщью <u>скрепки</u> и нажмите отправить!', {
+			parse_mode: "HTML",
 			reply_markup: new InlineKeyboard()
 										.text('❌ Отменить')
 		})

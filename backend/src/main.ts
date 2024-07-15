@@ -8,6 +8,7 @@ import cors from 'cors';
 
 import './bots/bot'
 import './bots/amo_bot'
+import './scripts/delOldImg'
 
 const app = express();
 
