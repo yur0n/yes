@@ -34,6 +34,8 @@ services:
       - DB_URL=mongodb://mongo:27017/main
     depends_on:
       - mongo
+    volumes:
+      - images:/app/public/a
 
   mongo:
     container_name: mongo
@@ -45,5 +47,6 @@ services:
       - pgdata:/data/db
 
 volumes:
+  images: {}
   pgdata:
     driver: local
