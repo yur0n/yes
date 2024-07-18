@@ -7,7 +7,7 @@ import {
 } from "react-admin";
 
 
-export default function BulkSendMessageButton() {
+export default function SendAllMessageButton() {
   const dataProvider = useDataProvider() as CustomDataProvider;
   const translate = useTranslate();
   const notify = useNotify();

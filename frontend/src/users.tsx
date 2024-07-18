@@ -13,6 +13,7 @@ import {
 } from "react-admin";
 import SendMessageDialog from "./components/sendMessageButton";
 import BulkSendMessageButton from "./components/bulkSendMessageButton";
+import SendAllMessageButton from "./components/sendAllMessageButton";
 
 const UserListActionButtons = () => (
   <>
