@@ -4,4 +4,5 @@ export interface User {
   name: string;
   username: string;
   note: string;
+  date: Date;
 }

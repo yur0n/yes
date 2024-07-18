@@ -17,6 +17,7 @@ export default {
 							id: 'Телефон',
 							name: 'Имя',
 							username: 'Пользователь',
+							date: 'Дата',
 							note: 'Примечание',
 							telegram: 'Телеграм',
 					},

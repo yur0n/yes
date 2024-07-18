@@ -20,6 +20,10 @@ const userSchema: Schema = new Schema({
   note: {
     type: String,
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const userModel = model<User & Document>('User', userSchema);

@@ -10,6 +10,7 @@ import {
   TextInput,
   BulkDeleteButton,
   TopToolbar,
+  DateField,
 } from "react-admin";
 import SendMessageDialog from "./components/sendMessageButton";
 import BulkSendMessageButton from "./components/bulkSendMessageButton";
@@ -37,6 +38,11 @@ export const UserList = () => (
       <TextField source="telegram" />
       <TextField source="name" />
       <TextField source="username" />
+      <DateField
+        source="date"
+        locales="en-GB"
+        options={{ hour12: false }}
+      />
       <ReferenceManyCount
         reference="messages"
         target="userId"

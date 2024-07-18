@@ -14,15 +14,17 @@ export async function sendMessage (req: Request, res: Response) {
     try {
       const users = await userModel.find({}, { telegram: 1 })
             .then(documents => documents.map(document => document.telegram));
+
+      res.send({ ok: true, status: 201 });
       for (const user of users) {
-        await fetch(`https://api.telegram.org/bot${BOT}/sendMessage?chat_id=${user}&text=${message}`).catch(e => {})
+        await fetch(`https://api.telegram.org/bot${BOT}/sendMessage?chat_id=${user}&text=${message}`).catch(e => {});
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     } catch (e) {
-      console.log(e)
-      return res.send({ ok: false, status: 400 })
+      console.log(e);
+      res.send({ ok: false, status: 400 });
     }
-    return res.send({ ok: true, status: 201 })
+    return;
   }
   const result: { delivered: boolean, id: string }[] = []
   for (const user of data) {
