@@ -42,6 +42,7 @@ bot.command('start', async ctx => {
 })
 
 bot.on('message', async ctx => {
+	ctx.reply('Данный бот предназначен для получения уведомлений о прибытии ваших заказов.')
 	const user = await userModel.findOne({ telegram: ctx.from.id });
 	if (!user) return;
 	await messageModel.create({

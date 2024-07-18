@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import { Client } from 'amocrm-js'
-import { pipeline } from 'stream';
 
 const pipelines = {
 	'OZON': 7000654,
@@ -80,7 +79,10 @@ const deliveryIds = {
 	},
 	'Приморск': {
 		'Центр': 'Центр г. Приморск ул Дружбы 15Б',
-	}
+	},
+	'с. Азовское': {
+		'Луначарск': 'Луначарск с. Азовское ул Центральная 95 а'
+	},         
 }
 
 function formatDate(unix) {
@@ -170,7 +172,11 @@ const colors = '⚪🔴🟠🟡🟢🔵🟣🟤⚫⭕🔘🧿'
 export async function getLeads(ids) {
 	const response = await client.request.get('/api/v4/leads', {
 		filter: {
-			id: ids
+			// custom_fields_values: { // Might work with amo subscription!!!!!!!!!!!!!
+			// 	field_id: 1770983,
+			// 	values: [{value: telegram}]
+			// }
+			id: ids // can add custom field with tgID
 		}
 	})
 

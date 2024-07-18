@@ -8,7 +8,11 @@ import {
 
 export const MessageList = () => (
   <List>
-    <Datagrid>
+    <Datagrid rowSx={(record) => ({
+                backgroundColor: record.user
+                  ? "rgba(64, 142, 198, 0.5)"
+                  : "rgba(122, 32, 73, 0.5)"
+              })}>
       <ReferenceField source="userId" reference="users" link="show" />
       <TextField source="message" />
       <DateField

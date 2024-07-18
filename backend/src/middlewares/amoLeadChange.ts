@@ -13,16 +13,16 @@ const arrivedStatuses = ['59013162', '59013154', '60533302', '64357918']
 export async function amoLeadChange (req: Request, res: Response) {
 	try {
 		const { leads } = req.body;
-		const leadStatus = leads.update[0].status_id
-		const tgID = leads.update[0].custom_fields?.find((field: {name: string})  => field.name === 'tgID')?.values[0].value
+		const leadStatus = leads.status[0].status_id
+		const tgID = leads.status[0].custom_fields?.find((field: {name: string})  => field.name === 'tgID')?.values[0].value
 		if (!arrivedStatuses.includes(leadStatus) || !tgID) {
 			return res.send('ok')
 		}
-		const name = `Заказ ${leads.update[0].id}`
-		const pipeline = pipelines[leads.update[0].pipeline_id as keyof typeof pipelines]
-		const mesta = leads.update[0].custom_fields.find((field: {name: string}) => field.name === 'Количество мест')?.values[0].value;
-		const punkt = leads.update[0].custom_fields.find((field: {name: string}) => field.name === 'Выбрать пункт')?.values[0].value;
-		const price = leads.update[0].price;
+		const name = `Заказ ${leads.status[0].id}`
+		const pipeline = pipelines[leads.status[0].pipeline_id as keyof typeof pipelines]
+		const mesta = leads.status[0].custom_fields.find((field: {name: string}) => field.name === 'Количество мест')?.values[0].value;
+		const punkt = leads.status[0].custom_fields.find((field: {name: string}) => field.name === 'Выбрать пункт')?.values[0].value;
+		const price = leads.status[0].price;
 
 		const message = `📦${name} из ${pipeline}\n\n🟢Прибыл в пункт: ${punkt}\n\n💵Сумма заказа: ${price || 'не указана'} р.\n\n🎫Количество мест: ${mesta || 'не указано'}`
 		await bot.api.sendMessage(tgID, message)

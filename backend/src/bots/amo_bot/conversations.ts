@@ -55,6 +55,13 @@ const deliveryPoints = {
 		`,
 		keyboard: () => new InlineKeyboard()
 									.text('Центр')
+	},
+	'с. Азовское': {
+		text: `
+«Луначарск» ▶️ с. Азовское ул Центральная 95а
+		`,
+		keyboard: () => new InlineKeyboard()
+									.text('Луначарск')
 	}
 }
 
@@ -94,8 +101,9 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		await ctx.reply('🏙️ Выберите Ваш город', {
 			reply_markup: new InlineKeyboard()
 										.text('Мелитополь')
-										.text('Бердянск')
-										.text('Приморск').row()
+										.text('Бердянск').row()
+										.text('Приморск')
+										.text('с. Азовское').row()
 										.text('❌ Отменить')
 		});
 		ctx = await conversation.wait();

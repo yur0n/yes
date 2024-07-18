@@ -1,6 +1,6 @@
 export interface Telegram {
   message: string;
-  data: {
+  data?: {
     userId: string;
     chatId: string;
   }[];

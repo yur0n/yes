@@ -4,7 +4,7 @@ const apiUrl = import.meta.env.VITE_JSON_SERVER_URL;
 import { fetchUtils } from "react-admin";
 
 interface Users {
-  data: {
+  data?: {
     userId: string;
     chatId: string;
   }[];

@@ -9,6 +9,7 @@ import {
   SimpleForm,
   TextInput,
   BulkDeleteButton,
+  TopToolbar,
 } from "react-admin";
 import SendMessageDialog from "./components/sendMessageButton";
 import BulkSendMessageButton from "./components/bulkSendMessageButton";
@@ -20,8 +21,14 @@ const UserListActionButtons = () => (
   </>
 );
 
+const ListActions = () => (
+  <TopToolbar>
+      <SendAllMessageButton />
+  </TopToolbar>
+);
+
 export const UserList = () => (
-  <List>
+  <List actions={<ListActions/>}>
     <Datagrid bulkActionButtons={<UserListActionButtons />}>
       <ReferenceField source="id" reference="users" link="show">
         <TextField source="phone" />
