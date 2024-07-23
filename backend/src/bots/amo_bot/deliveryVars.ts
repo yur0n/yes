@@ -4,7 +4,7 @@ import { InlineKeyboard } from "grammy";
 import sheetdb from 'sheetdb-node';
 
 const config = {
-  address: 'rzkc2kpzpb4k4',
+  address: process.env.SHEETDB,
 };
 
 const client = sheetdb(config);
