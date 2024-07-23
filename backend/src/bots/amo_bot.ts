@@ -8,6 +8,7 @@ import { addClientInfo, QR } from './amo_bot/conversations';
 import { deleteMsg, deleteMsgTime, replyAndDel } from './amo_bot/functions';
 import { getLeads } from './amo_bot/amo'
 import { mainMenu } from './amo_bot/menus';
+import { updatePoints } from './amo_bot/deliveryVars';
 
 const shops = {
 	'🟪 Wildberries': 'WB',
@@ -53,6 +54,10 @@ bot.command('start', async ctx => {
 	}
 	return;
 });
+
+bot.command('updateAmo',  async ctx => {
+
+})
 
 bot.on('message', async (ctx, next) => {
 	if (ctx.msg.text === '📝 Мои данные') {

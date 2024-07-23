@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { Client } from 'amocrm-js'
+import { deliveryIds } from './deliveryVars'
 
 const pipelines = {
 	'OZON': 7000654,

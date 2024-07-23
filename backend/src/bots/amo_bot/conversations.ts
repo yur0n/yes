@@ -2,7 +2,7 @@ import { InlineKeyboard, Keyboard } from 'grammy'
 import { mainMenu } from './menus'
 import { replyAndDel, deleteMsg, deleteMsgTime } from './functions'
 import { newLead, getContact } from './amo'
-import { parse } from 'path'
+import { deliveryPoints } from './deliveryVars'
 
 
 function responseMenu(ctx: any, text: string) {
@@ -16,54 +16,54 @@ function genFileName(store: string, length = 8) {
   return filename.replace(/[^a-z0-9]/gi, '_') + '.jpg';
 }
 
-const deliveryPoints = {
-	'Мелитополь': {
-		text: `
-«Феникс» ▶️ ул. Кирова, 50/1, ТЦ Феникс\n\n
-«Рижский» ▶️ ул. 50 лет Победы, д. 29\n\n
-«Новый Мелитополь» ▶️ ул. Гагарина 3\n\n
-«Авоська» ▶️ ул. 30 лет Победы, д. 42А\n\n
-«Черный» ▶️ пр Б. Хмельницкого 89\n\n
-«Парк» ▶️ ул. Ивана Алексеева 10А
-		`,
-		keyboard: () => new InlineKeyboard()
-									.text('Феникс')
-									.text('Рижский').row()
-									.text('Новый Мелитополь')
-									.text('Авоська').row()
-									.text('Черный')
-									.text('Парк')
-	},
-	'Бердянск': {
-		text: `
-«Авокадо» ▶️ пр. Победы 11Б\n\n
-«Кировский» ▶️ ул. Волонтеров 49Б\n\n
-«ЖД» ▶️ пр. Восточный 119\n\n
-«Гайдара» ▶️ бульвар Шевченко 12А\n\n
-«Fox» ▶️ ул. Университетская 16\n\n
-		`,
-		keyboard: () => new InlineKeyboard()
-									.text('Авокадо')
-									.text('Кировский').row()
-									.text('ЖД')
-									.text('Гайдара').row()
-									.text('Fox')
-	},
-	'Приморск': {
-		text: `
-«Центр» ▶️ ул. Дружбы 15Б
-		`,
-		keyboard: () => new InlineKeyboard()
-									.text('Центр')
-	},
-	'с. Азовское': {
-		text: `
-«Луначарск» ▶️ с. Азовское ул Центральная 95а
-		`,
-		keyboard: () => new InlineKeyboard()
-									.text('Луначарск')
-	}
-}
+// const deliveryPoints = {
+// 	'Мелитополь': {
+// 		text: `
+// «Феникс» ▶️ ул. Кирова, 50/1, ТЦ Феникс\n\n
+// «Рижский» ▶️ ул. 50 лет Победы, д. 29\n\n
+// «Новый Мелитополь» ▶️ ул. Гагарина 3\n\n
+// «Авоська» ▶️ ул. 30 лет Победы, д. 42А\n\n
+// «Черный» ▶️ пр Б. Хмельницкого 89\n\n
+// «Парк» ▶️ ул. Ивана Алексеева 10А
+// 		`,
+// 		keyboard: () => new InlineKeyboard()
+// 									.text('Феникс')
+// 									.text('Рижский').row()
+// 									.text('Новый Мелитополь')
+// 									.text('Авоська').row()
+// 									.text('Черный')
+// 									.text('Парк')
+// 	},
+// 	'Бердянск': {
+// 		text: `
+// «Авокадо» ▶️ пр. Победы 11Б\n\n
+// «Кировский» ▶️ ул. Волонтеров 49Б\n\n
+// «ЖД» ▶️ пр. Восточный 119\n\n
+// «Гайдара» ▶️ бульвар Шевченко 12А\n\n
+// «Fox» ▶️ ул. Университетская 16\n\n
+// 		`,
+// 		keyboard: () => new InlineKeyboard()
+// 									.text('Авокадо')
+// 									.text('Кировский').row()
+// 									.text('ЖД')
+// 									.text('Гайдара').row()
+// 									.text('Fox')
+// 	},
+// 	'Приморск': {
+// 		text: `
+// «Центр» ▶️ ул. Дружбы 15Б
+// 		`,
+// 		keyboard: () => new InlineKeyboard()
+// 									.text('Центр')
+// 	},
+// 	'с. Азовское': {
+// 		text: `
+// «Луначарск» ▶️ с. Азовское ул Центральная 95а
+// 		`,
+// 		keyboard: () => new InlineKeyboard()
+// 									.text('Луначарск')
+// 	}
+// }
 
 export async function addClientInfo(conversation: any, ctx: any) {
 	try {
