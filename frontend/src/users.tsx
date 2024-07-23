@@ -40,6 +40,7 @@ export const UserList = () => (
       <TextField source="username" />
       <DateField
         source="date"
+        showTime
         locales="en-GB"
         options={{ hour12: false }}
       />
