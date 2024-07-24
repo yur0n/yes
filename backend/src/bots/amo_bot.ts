@@ -56,7 +56,11 @@ bot.command('start', async ctx => {
 });
 
 bot.command('updateAmo',  async ctx => {
-
+	await ctx.reply('Обновляю!')
+	await updatePoints();
+	return ctx.reply('Обновлено!', {
+		reply_markup: mainMenu
+	})
 })
 
 bot.on('message', async (ctx, next) => {
@@ -83,7 +87,8 @@ bot.on('message', async (ctx, next) => {
 });
 
 bot.on('callback_query', async (ctx, next) => {
-	const callback = ctx.update.callback_query
+	await ctx.answerCallbackQuery();
+	const callback = ctx.update.callback_query;
 	if (callback?.data == '✏️ Изменить') {
 		await ctx.conversation.enter('addClientInfo')
 	}

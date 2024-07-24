@@ -2,7 +2,7 @@ import { InlineKeyboard, Keyboard } from 'grammy'
 import { mainMenu } from './menus'
 import { replyAndDel, deleteMsg, deleteMsgTime } from './functions'
 import { newLead, getContact } from './amo'
-import { deliveryPoints } from './deliveryVars'
+import { deliveryPoints, cities } from './deliveryVars'
 
 
 function responseMenu(ctx: any, text: string) {
@@ -99,23 +99,21 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		}
 
 		await ctx.reply('🏙️ Выберите Ваш город', {
-			reply_markup: new InlineKeyboard()
-										.text('Мелитополь')
-										.text('Бердянск').row()
-										.text('Приморск')
-										.text('с. Азовское').row()
-										.text('❌ Отменить')
+			reply_markup: cities
 		});
 		ctx = await conversation.wait();
+		await ctx.answerCallbackQuery();
 		const city = ctx.update.callback_query?.data;
 		if (!city || city === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.city = city;
 
+		
 		const selectedCity = deliveryPoints[city as keyof typeof deliveryPoints];
 		await ctx.reply(`📍 Выберите пункт получения посылок:\n\n` + selectedCity.text, {
-			reply_markup: selectedCity.keyboard()
+			reply_markup: selectedCity.keyboard
 		});
 		ctx = await conversation.wait();
+		await ctx.answerCallbackQuery();
 		const delivery = ctx.update.callback_query?.data;
 		if (!delivery || delivery === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.delivery = delivery;
@@ -135,6 +133,7 @@ export async function QR(conversation: any, ctx: any) {
 		ctx = await conversation.wait();
 		const callback = ctx.update.callback_query
 		if (callback?.data == '❌ Отменить') {
+			await ctx.answerCallbackQuery();
 			await deleteMsg(ctx, callback?.from.id, callback?.message.message_id)
 			return responseMenu(ctx, '☰ Главное меню');
 		} 
