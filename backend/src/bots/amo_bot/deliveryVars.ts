@@ -3,11 +3,7 @@
 import { InlineKeyboard } from "grammy";
 import sheetdb from 'sheetdb-node';
 
-const config = {
-  address: process.env.SHEETDB,
-};
-
-const client = sheetdb(config);
+const sheetDbClient = sheetdb({ address: process.env.SHEETDB });
 
 export let cities = new InlineKeyboard()
 									.text('Мелитополь')
@@ -48,7 +44,7 @@ export let deliveryPoints = {
 «Черный» ▶️ пр Б. Хмельницкого 89\n\n
 «Парк» ▶️ ул. Ивана Алексеева 10А
 		`,
-		keyboard: () => new InlineKeyboard()
+		keyboard: new InlineKeyboard()
 									.text('Феникс')
 									.text('Рижский').row()
 									.text('Новый Мелитополь')
@@ -75,14 +71,14 @@ export let deliveryPoints = {
 		text: `
 «Центр» ▶️ ул. Дружбы 15Б
 		`,
-		keyboard: () => new InlineKeyboard()
+		keyboard: new InlineKeyboard()
 									.text('Центр')
 	},
 	'с. Азовское': {
 		text: `
 «Луначарск» ▶️ с. Азовское ул Центральная 95а
 		`,
-		keyboard: () => new InlineKeyboard()
+		keyboard: new InlineKeyboard()
 									.text('Луначарск')
 	}
 }
@@ -90,13 +86,13 @@ export let deliveryPoints = {
 updatePoints();
 
 export async function updatePoints() {
-	let data;
-	await client.read({ sheet: "Sheet1" }).then(res => {
-		data = JSON.parse(res);
-		
+	// { sheet: "Sheet1" }
+	const data = await sheetDbClient.read().then(res => {
+		return JSON.parse(res);
 		}, function(err) {
 			console.log(err);
 	});
+	if (!data) return false;
 
 	let lastCity = ''
 	const result = {}
@@ -119,6 +115,7 @@ export async function updatePoints() {
 	deliveryIds = idBuilder(result);
 	deliveryPoints = pointsBuilder(result);
 	cities = parseCities(result)
+	return true;
 }
 
 function idBuilder(data) {

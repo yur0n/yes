@@ -56,9 +56,10 @@ bot.command('start', async ctx => {
 });
 
 bot.command('updateAmo',  async ctx => {
-	await ctx.reply('Обновляю!')
-	await updatePoints();
-	return ctx.reply('Обновлено!', {
+	await ctx.reply('Обновляю!');
+	const updated = await updatePoints();
+	const response = updated ? 'Обновлено!' : 'Ошибка обновления';
+	return ctx.reply(response, {
 		reply_markup: mainMenu
 	})
 })
