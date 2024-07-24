@@ -101,15 +101,15 @@ export async function updatePoints() {
 	let lastCity = ''
 	const result = {}
 	data.forEach(d => {
-		let city = d['Город']
+		let city = d['Город'].trim()
 		if (city == '') {
 			city = lastCity;
 		} else {
 			lastCity = city;
 		}
-		const name = d['Пункт']
-		const nameAmo = d['Пункт в АМО']
-		const nameBot = d['Пункт в сообщении бота']
+		const name = d['Пункт'].trim()
+		const nameAmo = d['Пункт в АМО'].trim()
+		const nameBot = d['Пункт в сообщении бота'].trim()
 
 		if (!result[city]) {
 			result[city] = [];
