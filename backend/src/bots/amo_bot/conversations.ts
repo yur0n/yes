@@ -5,10 +5,12 @@ import { newLead, getContact } from './amo'
 import { deliveryPoints, cities } from './deliveryVars'
 
 
-function responseMenu(ctx: any, text: string) {
-	ctx.reply(text, {
-		reply_markup: mainMenu
-	})
+async function responseMenu(ctx: any, text: string) {
+	try {
+		await ctx.reply(text, {
+			reply_markup: mainMenu
+		})
+	} catch (e) {}
 }
 
 function genFileName(store: string, length = 8) {
