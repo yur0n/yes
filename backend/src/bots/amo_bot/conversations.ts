@@ -26,7 +26,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 										.oneTime()
 		})
 		ctx = await conversation.wait();
-		if (ctx.msg.text === '❌ Отменить' || !ctx.msg.text) return responseMenu(ctx, '☰ Главное меню');
+		if (ctx.msg?.text === '❌ Отменить' || !ctx.msg?.text) return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.name = ctx.msg.text;
 
 		await ctx.reply('📱 Укажите Ваш номер телефона для связи в формате +79123456789 или +380123456789', {
@@ -36,10 +36,10 @@ export async function addClientInfo(conversation: any, ctx: any) {
 										.oneTime()
 		});
 		ctx = await conversation.wait();
-		if (ctx.msg.text === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
+		if (ctx.msg?.text === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		if (ctx.update.message?.contact?.phone_number) {
 			ctx.session.user.phone = '+' + ctx.update.message?.contact?.phone_number;
-		} else if (ctx.msg.text) {
+		} else if (ctx.msg?.text) {
 			if (ctx.msg.text.match(/^\+79\d{9}$/) || ctx.msg.text.match(/^\+380\d{9}$/)) {
 				ctx.session.user.phone = ctx.msg.text;
 			} else {
