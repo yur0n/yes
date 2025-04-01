@@ -107,7 +107,7 @@ bot.catch((err) => {
 	if (e.description) {
 	  console.error("Error in request:", e.description);
 	} else {
-	  console.error("Unknown error:", e);
+	  console.error("Unknown error:", e.message);
 	}
 });
 

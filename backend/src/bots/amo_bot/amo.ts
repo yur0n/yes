@@ -114,7 +114,7 @@ export async function getContact(name, phone, telegram, id)  {
 			values: [{value: telegram}]
 		},
 	];
-	await newContact.save();
+	await newContact.save().catch(e => {})
 	return newContact;
 }
 
@@ -137,11 +137,10 @@ export async function newLead(contact, telegram, shop, city, delivery, qrLink) {
 		}
 	]
 
-	lead.embeddedContacts.add([
-		contact
-	]);
 
-	await lead.save();
+	lead.embeddedContacts.add([contact]);
+	await lead.save().catch(e => {})
+
 	return lead
 }
 

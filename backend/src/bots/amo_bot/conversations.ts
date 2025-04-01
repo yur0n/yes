@@ -71,8 +71,8 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		if (!delivery || delivery === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		ctx.session.user.delivery = delivery;
 		responseMenu(ctx, '✅ Ваши данные сохранены!')
-	} catch (e) {
-		console.log(e)
+	} catch (e: any) {
+		console.log(e.message)
 	}
 }
 
@@ -90,8 +90,8 @@ export async function QR(conversation: any, ctx: any) {
 			await deleteMsg(ctx, callback?.from.id, callback?.message.message_id)
 			return responseMenu(ctx, '☰ Главное меню');
 		} 
-		if (!ctx.msg.photo) return responseMenu(ctx, '❌ Неверный формат');
-		const photo = await ctx.api.getFile(ctx.msg.photo[ctx.msg.photo.length - 1].file_id);
+		if (!ctx.msg?.photo) return responseMenu(ctx, '❌ Неверный формат');
+		const photo = await ctx.api.getFile(ctx.msg?.photo[ctx.msg?.photo.length - 1].file_id);
 		const fileName = genFileName(ctx.session.shop)
 		await photo.download(`./public/a/${fileName}`)
 		const qrLink = `admin.yes-pvz.ru:90/a/${fileName}`
@@ -109,8 +109,8 @@ export async function QR(conversation: any, ctx: any) {
 		ctx.session.leads = leads;
 		responseMenu(ctx, '✅ QR-код добавлен. Ожидайте вашу посылку!')
 
-	} catch (e) {
-		console.log(e)
+	} catch (e: any) {
+		console.log(e.message)
 		responseMenu(ctx, '❌ Ошибка при добавлении QR-кода, попробуйте снова!')
 	}
 }
