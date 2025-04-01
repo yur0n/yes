@@ -27,7 +27,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		})
 		ctx = await conversation.wait();
 		if (ctx.msg?.text === '❌ Отменить' || !ctx.msg?.text) return responseMenu(ctx, '☰ Главное меню');
-		ctx.session.user.name = ctx.msg.text;
+		ctx.session.user.name = ctx.msg.text.substring(0, 50);
 
 		await ctx.reply('📱 Укажите Ваш номер телефона для связи в формате +79123456789 или +380123456789', {
 			reply_markup: new Keyboard()
@@ -38,10 +38,10 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		ctx = await conversation.wait();
 		if (ctx.msg?.text === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
 		if (ctx.update.message?.contact?.phone_number) {
-			ctx.session.user.phone = '+' + ctx.update.message?.contact?.phone_number;
+			ctx.session.user.phone = '+' + ctx.update.message?.contact?.phone_number.substring(0, 50);
 		} else if (ctx.msg?.text) {
 			if (ctx.msg.text.match(/^\+79\d{9}$/) || ctx.msg.text.match(/^\+380\d{9}$/)) {
-				ctx.session.user.phone = ctx.msg.text;
+				ctx.session.user.phone = ctx.msg.text.substring(0, 50);
 			} else {
 				ctx.reply('❌ Неверный формат номера. Номер должен быть в формате +79123456789 или +380123456789')
 				return ctx.conversation.enter('addClientInfo')
@@ -58,7 +58,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		await ctx.answerCallbackQuery();
 		const city = ctx.update.callback_query?.data;
 		if (!city || city === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
-		ctx.session.user.city = city;
+		ctx.session.user.city = city.substring(0, 50);
 
 		
 		const selectedCity = deliveryPoints[city as keyof typeof deliveryPoints];
@@ -69,7 +69,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 		await ctx.answerCallbackQuery();
 		const delivery = ctx.update.callback_query?.data;
 		if (!delivery || delivery === '❌ Отменить') return responseMenu(ctx, '☰ Главное меню');
-		ctx.session.user.delivery = delivery;
+		ctx.session.user.delivery = delivery.substring(0, 50);
 		responseMenu(ctx, '✅ Ваши данные сохранены!')
 	} catch (e: any) {
 		console.log(e.message)
@@ -91,7 +91,7 @@ export async function QR(conversation: any, ctx: any) {
 			return responseMenu(ctx, '☰ Главное меню');
 		} 
 		if (!ctx.msg?.photo) return responseMenu(ctx, '❌ Неверный формат');
-		const photo = await ctx.api.getFile(ctx.msg?.photo[ctx.msg?.photo.length - 1].file_id);
+		const photo = await ctx.api.getFile(ctx.msg?.photo[ctx.msg?.photo.length - 1]?.file_id);
 		const fileName = genFileName(ctx.session.shop)
 		await photo.download(`./public/a/${fileName}`)
 		const qrLink = `admin.yes-pvz.ru:90/a/${fileName}`
