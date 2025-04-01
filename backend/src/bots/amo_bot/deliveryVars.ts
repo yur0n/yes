@@ -96,7 +96,7 @@ export async function updatePoints() {
     const result = {};
 
     rows.forEach((row, index) => {
-      if (index === 0 || row.length < 4) return; // Пропускаем заголовки и пустые строки
+      if (index === 0 || row.length < 4) return;
 
       const city = row[0] || lastCity;
       const name = row[1];
