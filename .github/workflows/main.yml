@@ -31,9 +31,9 @@ jobs:
 
       - name: Build & Push frontend
         run: |
-          docker build -t $IMAGE_NAME_FRONTEND:latest ./frontend
+          docker build -t $IMAGE_NAME_FRONTEND:latest ./frontend \
+            --build-arg API_URL=http://176.119.156.143:90/api
           docker push $IMAGE_NAME_FRONTEND:latest
-
       - name: Deploy on remote server
         uses: appleboy/ssh-action@v1.0.0
         with:
