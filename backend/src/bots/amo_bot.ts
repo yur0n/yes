@@ -10,7 +10,7 @@ import { getLeads } from './amo_bot/amo'
 import { mainMenu } from './amo_bot/menus';
 import { updatePoints } from './amo_bot/deliveryVars';
 
-function removeInvalidUtf8(str) {
+function removeInvalidUtf8(str: string) {
 	return str.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '');
 }
 
