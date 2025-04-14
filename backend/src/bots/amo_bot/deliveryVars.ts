@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { InlineKeyboard } from "grammy";
+import Papa from "papaparse";
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1XHjU4gR3b9Kbw8QIf4vqRPBmW8JZ1pHoV_MKiVm2330/gviz/tq?tqx=out:csv";
@@ -88,24 +89,63 @@ Adress text\n\n
 	}
 }
 
+// export async function updatePoints() {
+// 	try {
+// 	  const response = await fetch(SHEET_URL);
+// 	  const csvText = await response.text();
+// 	  const rows = csvText
+// 		.split("\n")
+// 		.map((row) => row.split(",").map((cell) => cell.trim().replace(/^"|"$/g, "")));
+
+//     let lastCity = "";
+//     const result = {};
+
+//     rows.forEach((row, index) => {
+//       if (index === 0 || row.length < 4) return;
+
+//       const city = row[0] || lastCity;
+//       const name = row[1];
+//       const nameAmo = row[2];
+//       const nameBot = row[3];
+  
+// 		if (city) lastCity = city;
+  
+// 		if (!result[city]) {
+// 		  result[city] = [];
+// 		}
+// 		result[city].push({ name, nameAmo, nameBot });
+// 	  });
+  
+// 	  deliveryIds = idBuilder(result);
+// 	  deliveryPoints = pointsBuilder(result);
+// 	  cities = parseCities(result);
+  
+// 	  console.log("✅ Данные успешно загружены");
+// 	  return true;
+// 	} catch (error) {
+// 	  console.error("❌ Ошибка при загрузке данных:", error);
+// 	  return false;
+// 	}
+//   }
+
 export async function updatePoints() {
 	try {
 	  const response = await fetch(SHEET_URL);
 	  const csvText = await response.text();
-	  const rows = csvText
-		.split("\n")
-		.map((row) => row.split(",").map((cell) => cell.trim().replace(/^"|"$/g, "")));
-
-    let lastCity = "";
-    const result = {};
-
-    rows.forEach((row, index) => {
-      if (index === 0 || row.length < 4) return;
-
-      const city = row[0] || lastCity;
-      const name = row[1];
-      const nameAmo = row[2];
-      const nameBot = row[3];
+	  const { data: rows } = Papa.parse(csvText, {
+		skipEmptyLines: true,
+	  });
+  
+	  let lastCity = "";
+	  const result = {};
+  
+	  rows.forEach((row, index) => {
+		if (index === 0 || row.length < 4) return;
+  
+		const city = row[0] || lastCity;
+		const name = row[1];
+		const nameAmo = row[2];
+		const nameBot = row[3];
   
 		if (city) lastCity = city;
   
