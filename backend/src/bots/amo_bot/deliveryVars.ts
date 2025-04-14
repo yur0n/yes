@@ -142,10 +142,10 @@ export async function updatePoints() {
 	  rows.forEach((row, index) => {
 		if (index === 0 || row.length < 4) return;
   
-		const city = row[0] || lastCity;
-		const name = row[1];
-		const nameAmo = row[2];
-		const nameBot = row[3];
+		const city = row[0].trim() || lastCity.trim();
+		const name = row[1].trim();
+		const nameAmo = row[2].trim();
+		const nameBot = row[3].trim();
   
 		if (city) lastCity = city;
   
