@@ -139,7 +139,12 @@ export async function newLead(contact, telegram, shop, city, delivery, qrLink) {
 
 
 	lead.embeddedContacts.add([contact]);
-	await lead.save().catch(e => {})
+	await lead.save().catch(e => {
+		console.log('ERROR CREATING LEAD')
+		console.log(e)
+		console.log('lead:', lead)
+		console.log('ADDRESS:', deliveryIds[city][delivery])
+	})
 
 	return lead
 }
