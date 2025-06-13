@@ -49,15 +49,15 @@ bot.use(createConversation(QR));
 
 bot.api.setMyCommands([{ command: 'start', description: 'Меню' } ]);
 
-bot.use(async (ctx, next) => {
-    console.log('📨 Received update:', {
-        updateId: ctx.update.update_id,
-        type: Object.keys(ctx.update)[1],
-        from: ctx.from?.id,
-        text: ctx.message?.text || 'no text'
-    });
-    await next();
-});
+// bot.use(async (ctx, next) => {
+//     console.log('📨 Received update:', {
+//         updateId: ctx.update.update_id,
+//         type: Object.keys(ctx.update)[1],
+//         from: ctx.from?.id,
+//         text: ctx.message?.text || 'no text'
+//     });
+//     await next();
+// });
 
 bot.command('start', async ctx => {
 	ctx.session.user.telegram = ctx.from?.id.toString();
