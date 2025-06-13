@@ -92,7 +92,7 @@ bot.on('message', async (ctx, next) => {
 	const selectedShop = shops[ctx.msg.text as keyof typeof shops];
 	if (selectedShop) {
 		const { leadsNumber } = await getLeads(ctx.session.leads)
-		if (leadsNumber >= 10) {
+		if (leadsNumber >= 30) {
 			return await ctx.reply('❌ Вы сделали слишком много заказов, пожалуйста, подождите обработку предыдущих заказов или обратитесь в поддержку');
 		}
 		ctx.session.shop = selectedShop;

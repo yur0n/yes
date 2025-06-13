@@ -163,15 +163,11 @@ export async function getLeads(ids) {
 		}
 	})
 
-	const leads = response.data._embedded?.leads.sort(statusesSort);
-
-	if (!leads?.length) {
-		return { message: '⚪ Активные заказы отсутствуют', leadsNumber: 0 }
-	}
+	const leads = response.data._embedded?.leads?.sort(statusesSort);
 
 	let leadsNumber = 0
 	let message = ``
-	leads.forEach(lead => {
+	leads?.forEach(lead => {
 		if (!statuses[lead.pipeline_id]?.[lead.status_id]) return;
 		const date = formatDate(lead.created_at)
 		const mesta = lead.custom_fields_values.find(obj => obj.field_name === 'Количество мест')?.values[0].value;
@@ -181,10 +177,12 @@ export async function getLeads(ids) {
 		leadsNumber++;
 		// message += `${name}, ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id][lead.status_id]}, Стоимость: ${lead.price || 'не указано'}, Количество мест: ${mesta || 'не указано'}, Пункт получения: ${punkt} \n\n`
 	});
+
 	if (!message.length) message = '⚪ Активные заказы отсутствуют';
 	if (message.length > 4096) {
 		message = message.slice(0, 4092) + '...';
 	}
+
 	return { message, leadsNumber }
 }
 
