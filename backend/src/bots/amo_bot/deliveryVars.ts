@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { InlineKeyboard } from "grammy";
+import Papa from "papaparse";
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/1XHjU4gR3b9Kbw8QIf4vqRPBmW8JZ1pHoV_MKiVm2330/gviz/tq?tqx=out:csv";
@@ -10,30 +11,29 @@ export let cities = new InlineKeyboard()
 									.text('Мелитополь')
 									.text('Бердянск').row()
 									.text('Приморск').row()
-									.text('❌ Отменить')
 
 export let deliveryIds = {
 	'Мелитополь': {
-		'Феникс': 'Феникс г.Мелитополь Кирова 50/1',
-		'Рижский': 'РИЖСКИЙ г.Мелитополь 50 л Победы 29',
-		'Новый Мелитополь': 'Новый Мелитополь ул Гагарина 3',
-		'Авоська': 'Авоська г.Мелитополь',
-		'Черный': 'Черный г. Мелитополь Богдана Хмельницкого 89',
-		'Парк': 'Черный г. Мелитополь Богдана Хмельницкого 89',
+ 		'Феникс': 'Феникс г.Мелитополь Кирова 50/1',
+ 		'Рижский': 'РИЖСКИЙ г.Мелитополь 50 л Победы 29',
+ 		'Новый Мелитополь': 'Новый Мелитополь ул Гагарина 3',
+ 		'Авоська': 'Авоська г.Мелитополь',
+ 		'Черный': 'Черный г. Мелитополь Богдана Хмельницкого 89',
+ 		'Парк': 'Черный г. Мелитополь Богдана Хмельницкого 89',
 	},
-	'Бердянск': {
-		'Авокадо': 'АВОКАДО г. Бердянск пр Победы 11Б',
-		'Кировский': 'КИРОВСКИЙ г. Бердянск ул волонтеров 49Б',
-		'ЖД': 'ЖД г. Бердянск пр Восточный 119',
-		'Гайдара': 'Гайдара г. Бердянск бул Шевченко 12а',
-		'Fox': 'Fox г. Бердянск ул Университетская 16',
-	},
-	'Приморск': {
-		'Центр': 'Центр г. Приморск ул Дружбы 15Б',
-	},
-	'с. Азовское': {
-		'Луначарск': 'Луначарск с. Азовское ул Центральная 95 а'
-	},         
+ 	'Бердянск': {
+ 		'Авокадо': 'АВОКАДО г. Бердянск пр Победы 11Б',
+ 		'Кировский': 'КИРОВСКИЙ г. Бердянск ул волонтеров 49Б',
+ 		'ЖД': 'ЖД г. Бердянск пр Восточный 119',
+ 		'Гайдара': 'Гайдара г. Бердянск бул Шевченко 12а',
+ 		'Fox': 'Fox г. Бердянск ул Университетская 16',
+ 	},
+ 	'Приморск': {
+ 		'Центр': 'Центр г. Приморск ул Дружбы 15Б',
+ 	},
+ 	'с. Азовское': {
+ 		'Луначарск': 'Луначарск с. Азовское ул Центральная 95 а'
+ 	},         
 }
 export let deliveryPoints = {
 	'Мелитополь': {
@@ -71,9 +71,14 @@ export let deliveryPoints = {
 	'Приморск': {
 		text: `
 «Центр» ▶️ ул. Дружбы 15Б
+Adress text\n\n
+Adress text\n\n
+Adress text\n\n
 		`,
 		keyboard: new InlineKeyboard()
 									.text('Центр')
+									.text('Point')
+									.text('Point').row()
 	},
 	'с. Азовское': {
 		text: `
@@ -88,65 +93,20 @@ export async function updatePoints() {
 	try {
 	  const response = await fetch(SHEET_URL);
 	  const csvText = await response.text();
-	  
-	  const parseCSV = (text) => {
-		const results = [];
-		let row = [];
-		let inQuotes = false;
-		let currentValue = '';
-		
-		for (let i = 0; i < text.length; i++) {
-		  const char = text[i];
-		  const nextChar = text[i + 1];
-		  
-		  if (char === '"') {
-			if (inQuotes && nextChar === '"') {
-			  currentValue += '"';
-			  i++;
-			} else {
-			  inQuotes = !inQuotes;
-			}
-		  } else if (char === ',' && !inQuotes) {
-
-			row.push(currentValue.trim());
-			currentValue = '';
-		  } else if ((char === '\r' || char === '\n') && !inQuotes) {
-
-			if (currentValue !== '' || row.length > 0) {
-			  row.push(currentValue.trim());
-			  results.push(row);
-			  row = [];
-			  currentValue = '';
-			}
-		
-			if (char === '\r' && nextChar === '\n') {
-			  i++;
-			}
-		  } else {
-			currentValue += char;
-		  }
-		}
-		
-		if (currentValue !== '' || row.length > 0) {
-		  row.push(currentValue.trim());
-		  results.push(row);
-		}
-		
-		return results;
-	  };
-	  
-	  const rows = parseCSV(csvText);
-
-	let lastCity = "";
-	const result = {};
-
-	rows.forEach((row, index) => {
-	  if (index === 0 || row.length < 4) return;
-
-	  const city = row[0] || lastCity;
-	  const name = row[1];
-	  const nameAmo = row[2];
-	  const nameBot = row[3];
+	  const { data: rows } = Papa.parse(csvText, {
+		skipEmptyLines: true,
+	  });
+  
+	  let lastCity = "";
+	  const result = {};
+  
+	  rows.forEach((row, index) => {
+		if (index === 0 || row.length < 4) return;
+  
+		const city = row[0].trim() || lastCity.trim();
+		const name = row[1].trim();
+		const nameAmo = row[2].trim();
+		const nameBot = row[3].trim();
   
 		if (city) lastCity = city;
   

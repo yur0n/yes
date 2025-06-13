@@ -11,6 +11,10 @@ import { getLeads } from './amo_bot/amo'
 import { mainMenu } from './amo_bot/menus';
 import { updatePoints } from './amo_bot/deliveryVars';
 
+function removeInvalidUtf8(str: string) {
+	return str.replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '');
+}
+
 const shops = {
 	'🟪 Wildberries': 'WB',
 	'🟦 OZON': 'OZON',
@@ -79,7 +83,7 @@ bot.command('updateAmo',  async ctx => {
 bot.on('message', async (ctx, next) => {
 	if (ctx.msg.text === '📝 Мои данные') {
 		const { telegram, name, phone, city, delivery } = ctx.session.user
-		await ctx.reply(`🌐Telegram: ${telegram}\n👨ФИО: ${name || 'Не указано'}\n📱Номер телефона: ${phone || 'Не указан'}\n🏙️Город: ${city || 'Не указан'}\n📍Пункт доставки: ${delivery || 'Не указан'}`, {
+		await ctx.reply(removeInvalidUtf8(`🌐Telegram: ${telegram}\n👨ФИО: ${name || 'Не указано'}\n📱Номер телефона: ${phone || 'Не указан'}\n🏙️Город: ${city || 'Не указан'}\n📍Пункт доставки: ${delivery || 'Не указан'}`), {
 			reply_markup: new InlineKeyboard()
 												.text('✏️ Изменить')
 												.text('👁 Скрыть')

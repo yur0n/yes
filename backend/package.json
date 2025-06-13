@@ -15,7 +15,7 @@
     "grammy": "^1.21.1",
     "mongoose": "^8.3.2",
     "morgan": "^1.10.0",
-    "sheetdb-node": "^0.0.12",
+    "papaparse": "5.5.2",
     "tsx": "^4.7.2",
     "typescript": "^5.4.5"
   },
