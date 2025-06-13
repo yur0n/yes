@@ -43,11 +43,11 @@ export async function addClientInfo(conversation: any, ctx: any) {
 			if (ctx.msg.text.match(/^\+79\d{9}$/) || ctx.msg.text.match(/^\+380\d{9}$/)) {
 				ctx.session.user.phone = ctx.msg.text.substring(0, 50);
 			} else {
-				ctx.reply('❌ Неверный формат номера. Номер должен быть в формате +79123456789 или +380123456789')
+				await ctx.reply('❌ Неверный формат номера. Номер должен быть в формате +79123456789 или +380123456789')
 				return ctx.conversation.enter('addClientInfo')
 			}
 		} else {
-			ctx.reply('❌ Номер не сохранен')
+			await ctx.reply('❌ Номер не сохранен')
 			return ctx.conversation.enter('addClientInfo')
 		}
 
@@ -78,7 +78,7 @@ export async function addClientInfo(conversation: any, ctx: any) {
 
 export async function QR(conversation: any, ctx: any) {
 	try {
-		ctx.reply('🏿 Прикрепите скриншот QR-кода с помщью <u>скрепки</u> и нажмите отправить!', {
+		await ctx.reply('🏿 Прикрепите скриншот QR-кода с помщью <u>скрепки</u> и нажмите отправить!', {
 			parse_mode: "HTML",
 			reply_markup: new InlineKeyboard()
 										.text('❌ Отменить')
@@ -104,7 +104,7 @@ export async function QR(conversation: any, ctx: any) {
 
 		ctx.session.user.amoId = contact?.id
 		const lead = await newLead(contact, telegram, ctx.session.shop, city, delivery, qrLink)
-		const leads = ctx.session.leads ? ctx.session.leads : []
+		const leads = ctx.session.leads || []
 		leads.push(lead.id)
 		ctx.session.leads = leads;
 		responseMenu(ctx, '✅ QR-код добавлен. Ожидайте вашу посылку!')

@@ -76,8 +76,8 @@ function formatDate(unix) {
 }
 
 function statusesSort(a, b) {
-	const statusA = statuses[a.pipeline_id][a.status_id] || 'skip';
-	const statusB = statuses[b.pipeline_id][b.status_id] || 'skip';
+	const statusA = statuses[a.pipeline_id]?.[a.status_id] || 'skip';
+	const statusB = statuses[b.pipeline_id]?.[b.status_id] || 'skip';
 
 	const statusOrder = {
     '🟢Прибыл в Пункт': 1,
@@ -146,6 +146,9 @@ export async function newLead(contact, telegram, shop, city, delivery, qrLink) {
 
 const colors = '⚪🔴🟠🟡🟢🔵🟣🟤⚫⭕🔘🧿'
 export async function getLeads(ids) {
+	if (!ids?.length) {
+		return { message: '⚪ Активные заказы отсутствуют', leadsNumber: 0 }
+	}
 	const response = await client.request.get('/api/v4/leads', {
 		filter: {
 			// custom_fields_values: { // Might work with amo subscription!!!!!!!!!!!!!
@@ -157,26 +160,27 @@ export async function getLeads(ids) {
 	})
 
 	const leads = response.data._embedded?.leads.sort(statusesSort);
-	let message = ``
 
 	if (!leads?.length) {
-		message = '⚪ Активные заказы отсутствуют';
-		return message;
+		return { message: '⚪ Активные заказы отсутствуют', leadsNumber: 0 }
 	}
 	
+	let message = ``
 	leads.forEach(lead => {
-		if (!statuses[lead.pipeline_id][lead.status_id]) return;
+		if (!statuses[lead.pipeline_id]?.[lead.status_id]) return;
 		const date = formatDate(lead.created_at)
 		const mesta = lead.custom_fields_values.find(obj => obj.field_name === 'Количество мест')?.values[0].value;
 		const punkt = lead.custom_fields_values.find(obj => obj.field_name === 'Выбрать пункт')?.values[0].value;
 		const name = lead.name.replace('Сделка #', 'Заказ ');
-		message += `📦${name} от ${date}: ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id][lead.status_id]}\n\n`
+		message += `📦${name} от ${date}: ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id]?.[lead.status_id]}\n\n`
 		
 		// message += `${name}, ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id][lead.status_id]}, Стоимость: ${lead.price || 'не указано'}, Количество мест: ${mesta || 'не указано'}, Пункт получения: ${punkt} \n\n`
 	});
 	if (!message.length) message = '⚪ Активные заказы отсутствуют';
-	return message
-
+	if (message.length > 4096) {
+		message = message.slice(0, 4092) + '...';
+	}
+	return { message, leadsNumber: leads.length }
 }
 
 

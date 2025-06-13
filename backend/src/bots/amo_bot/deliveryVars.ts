@@ -88,20 +88,65 @@ export async function updatePoints() {
 	try {
 	  const response = await fetch(SHEET_URL);
 	  const csvText = await response.text();
-	  const rows = csvText
-		.split("\n")
-		.map((row) => row.split(",").map((cell) => cell.trim().replace(/^"|"$/g, ""))); // Убираем лишние кавычки
+	  
+	  const parseCSV = (text) => {
+		const results = [];
+		let row = [];
+		let inQuotes = false;
+		let currentValue = '';
+		
+		for (let i = 0; i < text.length; i++) {
+		  const char = text[i];
+		  const nextChar = text[i + 1];
+		  
+		  if (char === '"') {
+			if (inQuotes && nextChar === '"') {
+			  currentValue += '"';
+			  i++;
+			} else {
+			  inQuotes = !inQuotes;
+			}
+		  } else if (char === ',' && !inQuotes) {
 
-    let lastCity = "";
-    const result = {};
+			row.push(currentValue.trim());
+			currentValue = '';
+		  } else if ((char === '\r' || char === '\n') && !inQuotes) {
 
-    rows.forEach((row, index) => {
-      if (index === 0 || row.length < 4) return;
+			if (currentValue !== '' || row.length > 0) {
+			  row.push(currentValue.trim());
+			  results.push(row);
+			  row = [];
+			  currentValue = '';
+			}
+		
+			if (char === '\r' && nextChar === '\n') {
+			  i++;
+			}
+		  } else {
+			currentValue += char;
+		  }
+		}
+		
+		if (currentValue !== '' || row.length > 0) {
+		  row.push(currentValue.trim());
+		  results.push(row);
+		}
+		
+		return results;
+	  };
+	  
+	  const rows = parseCSV(csvText);
 
-      const city = row[0] || lastCity;
-      const name = row[1];
-      const nameAmo = row[2];
-      const nameBot = row[3];
+	let lastCity = "";
+	const result = {};
+
+	rows.forEach((row, index) => {
+	  if (index === 0 || row.length < 4) return;
+
+	  const city = row[0] || lastCity;
+	  const name = row[1];
+	  const nameAmo = row[2];
+	  const nameBot = row[3];
   
 		if (city) lastCity = city;
   
@@ -121,7 +166,7 @@ export async function updatePoints() {
 	  console.error("❌ Ошибка при загрузке данных:", error);
 	  return false;
 	}
-  }
+}
   
   function idBuilder(data) {
 	const deliveryIds = {};
