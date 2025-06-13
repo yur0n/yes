@@ -168,7 +168,8 @@ export async function getLeads(ids) {
 	if (!leads?.length) {
 		return { message: '⚪ Активные заказы отсутствуют', leadsNumber: 0 }
 	}
-	
+
+	let leadsNumber = 0
 	let message = ``
 	leads.forEach(lead => {
 		if (!statuses[lead.pipeline_id]?.[lead.status_id]) return;
@@ -177,14 +178,14 @@ export async function getLeads(ids) {
 		const punkt = lead.custom_fields_values.find(obj => obj.field_name === 'Выбрать пункт')?.values[0].value;
 		const name = lead.name.replace('Сделка #', 'Заказ ');
 		message += `📦${name} от ${date}: ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id]?.[lead.status_id]}\n\n`
-		
+		leadsNumber++;
 		// message += `${name}, ${pipelinesReverse[lead.pipeline_id]}, Статус: ${statuses[lead.pipeline_id][lead.status_id]}, Стоимость: ${lead.price || 'не указано'}, Количество мест: ${mesta || 'не указано'}, Пункт получения: ${punkt} \n\n`
 	});
 	if (!message.length) message = '⚪ Активные заказы отсутствуют';
 	if (message.length > 4096) {
 		message = message.slice(0, 4092) + '...';
 	}
-	return { message, leadsNumber: leads.length }
+	return { message, leadsNumber }
 }
 
 
