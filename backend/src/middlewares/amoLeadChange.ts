@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
-import bot from '../bots/amo_bot';
+import { Api } from 'grammy';
+
+const api = new Api(process.env.AMO_BOT!);
 
 const pipelines = {
 	'7000654': 'OZON',
@@ -25,7 +27,7 @@ export async function amoLeadChange (req: Request, res: Response) {
 		const price = leads.status[0].price;
 
 		const message = `📦${name} из ${pipeline}\n\n🟢Прибыл в пункт: ${punkt}\n\n💵Сумма заказа: ${price || 'не указана'} р.\n\n🎫Количество мест: ${mesta || 'не указано'}`
-		await bot.api.sendMessage(tgID, message)
+		await api.sendMessage(tgID, message)
 		res.send('ok')
 	} catch (e) {
 		console.log(e);

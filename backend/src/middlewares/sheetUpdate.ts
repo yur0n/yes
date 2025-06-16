@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import bot from '../bots/bot';
 import messageModel from '../models/message.model';
 import userModel from '../models/user.model';
+import { Api } from 'grammy';
+
+const api = new Api(process.env.AMO_BOT!);
 
 export async function sheetUpdate (req: Request, res: Response) {
 	const users: IUser[] = req.body
@@ -37,7 +39,7 @@ async function sendNotification(users: IUser[]) {
 			});
 			message += `\n\nПункт выдачи: ${user.place}\n\nВаш YES-PVZ.RU`;
 			try {
-				await bot.api.sendMessage(reciver.telegram, message);
+				await api.sendMessage(reciver.telegram, message);
 				await messageModel.create({
 					userId: reciver._id.toString(),
 					message: `ОПОВЕЩЕН О ПРИБЫТИИ ЗАКАЗА ${user.code}`,
